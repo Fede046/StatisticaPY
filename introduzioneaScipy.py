@@ -4,8 +4,14 @@ import pandas as pd
 
 # Distribuzione Normale: calcola la densità di probabilità (PDF) per x=2 con media 0 e deviazione standard 1
 # Esempio: Qual è la probabilità che una variabile casuale normale standard sia esattamente 2?
+#Una variabile casuale normale standard è una variabile casuale continua che segue una distribuzione normale con media 
+#μ=0 e deviazione standard σ=1. Questa distribuzione è anche chiamata distribuzione normale standard o distribuzione Z.
 print(norm.pdf(2, 0, 1))
-
+#Cosa significa questo valore?
+#Il valore 0.05399 non rappresenta una probabilità diretta, ma la densità di probabilità nel punto z=2.
+#Per una variabile casuale continua, la probabilità di ottenere un valore esatto (ad esempio, esattamente 2) 
+#è teoricamente 0, poiché la probabilità è definita su un intervallo. 
+#Tuttavia, la densità di probabilità ci dà un'idea di quanto è "probabile" che la variabile casuale assuma valori vicini a 2.
 #%%
 
 from scipy.stats import poisson
@@ -14,6 +20,9 @@ from scipy.stats import poisson
 # Esempio: Se il numero medio di chiamate ricevute da un call center è 10 all'ora,
 # qual è la probabilità di ricevere esattamente 3 chiamate in un'ora?
 print(poisson.pmf(3, 10))
+#Interpretazione
+#Se il risultato fosse, ad esempio, 0.0076, significherebbe che c'è una probabilità dello 0.76% di ricevere 
+#esattamente 3 chiamate in un'ora.
 
 #%%
 
