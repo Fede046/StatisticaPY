@@ -15,7 +15,9 @@ print(norm.pdf(2, 0, 1))
 #%%
 
 from scipy.stats import poisson
-
+#La distribuzione di Poisson è una distribuzione di probabilità discreta che descrive la probabilità che un certo 
+#numero di eventi si verifichi in un intervallo di tempo o spazio fissato, sapendo che questi eventi si verificano 
+#con un tasso medio noto e indipendentemente dal tempo trascorso dall'ultimo evento.
 # Distribuzione di Poisson: calcola la probabilità di avere esattamente 3 eventi con un tasso di occorrenza di 10
 # Esempio: Se il numero medio di chiamate ricevute da un call center è 10 all'ora,
 # qual è la probabilità di ricevere esattamente 3 chiamate in un'ora?
