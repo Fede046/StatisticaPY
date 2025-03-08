@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Mar  6 11:29:13 2025
-
-@author: malse
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt  # Correzione dell'importazione
 
