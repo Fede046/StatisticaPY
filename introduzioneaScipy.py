@@ -29,19 +29,44 @@ print(poisson.pmf(3, 10))
 #%%
 
 from scipy.stats import binom
+#La distribuzione binomiale è una distribuzione di probabilità discreta che descrive il 
+#numero di successi in un numero fisso di prove indipendenti, ciascuna con la stessa probabilità di successo.
+
+#La distribuzione binomiale è utile quando:
+
+#Ci sono un numero fisso di prove (n).
+#Ogni prova ha solo due possibili esiti: successo o fallimento.
+#La probabilità di successo (p) è costante per ogni prova.
+#Le prove sono indipendenti: il risultato di una prova non influenza le altre.
+
+#La probabilità di ottenere esattamente k successi in n prove è data da = 
+#P (X = k) = (n k)*p^k*(1-p)^(n-k)
+
+#k è il numero di successi di cui si vuole calcolare la probabilità.
+#(n k) è il coefficiente binomiale, che rappresenta il numero di modi in cui si possono ottenere k successi in n prove. 
+#Si calcola come: (n k)= n!/(k!*(n−k)!)
+#p è la probabilità di successo in una singola prova.
+#1−p è la probabilità di fallimento in una singola prova.
+
+
 
 # Distribuzione Binomiale: calcola la probabilità di avere esattamente 4 successi in 5 prove con probabilità di successo 0.51
 # Esempio: Se lanci una moneta truccata (con probabilità di testa 0.51) 5 volte,
 # qual è la probabilità di ottenere esattamente 4 teste?
 print(binom.pmf(4, 5, 0.51))
+#Interpretazione
+#Se il risultato fosse, ad esempio, 0.166, significherebbe che c'è una probabilità del 16.6% 
+#di ottenere esattamente 4 teste in 5 lanci.
 
 #%%
 
 from scipy.stats import binom
 
-# Distribuzione Binomiale: calcola la probabilità cumulativa di avere al massimo 3 successi in 5 prove con probabilità di successo 0.51
+# Distribuzione Binomiale: calcola la probabilità cumulativa di avere al massimo 3 successi in 5
+# prove con probabilità di successo 0.51
 # Esempio: Se lanci una moneta truccata (con probabilità di testa 0.51) 5 volte, 
 #qual è la probabilità di ottenere al massimo 3 teste?
+#notamo che qua la differenza è la parola al massimo
 print(binom.cdf(3.2, 5, 0.51))
 
 #%%
@@ -56,14 +81,31 @@ print(binom.mean(5, 0.51))
 
 from scipy.stats import binom
 
+#La deviazione standard è la radice quadrata della varianza. 
+#Rappresenta la dispersione dei dati nella stessa unità di misura dei dati originali, 
+#rendendola più interpretabile rispetto alla varianza.
+#Interpretazione
+#Una deviazione standard alta indica che i dati sono molto dispersi.
+#Una deviazione standard bassa indica che i dati sono concentrati vicino alla media.
+
 # Distribuzione Binomiale: calcola la deviazione standard per 5 prove con probabilità di successo 0.51
 # Esempio: Se lanci una moneta truccata (con probabilità di testa 0.51) 5 volte,
 # qual è la deviazione standard del numero di teste?
+#attendzione la devizione stadard non la varianza!!!
+
 print(binom.std(5, 0.51))
 
 #%%
 
 from scipy.stats import binom
+#La varianza è una misura della dispersione dei dati rispetto alla media.
+# Si calcola come la media dei quadrati degli scarti tra ciascun dato e la media.
+#Interpretazione
+#Una varianza alta indica che i dati sono molto dispersi intorno alla media.
+#Una varianza bassa indica che i dati sono concentrati vicino alla media.
+#Una varianza è considerata alta se i dati sono molto dispersi rispetto alla media. Ad esempio:
+#Se la media è 10 e la varianza è 100, i dati sono molto dispersi.
+#Se la media è 10 e la varianza è 1, i dati sono molto concentrati intorno alla media.
 
 # Distribuzione Binomiale: calcola la varianza per 5 prove con probabilità di successo 0.51
 # Esempio: Se lanci una moneta truccata (con probabilità di testa 0.51) 5 volte,
