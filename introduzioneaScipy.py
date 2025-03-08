@@ -127,85 +127,106 @@ print(binom.rvs(5, 0.51))
 #- **Distribuzione di Poisson**: Utilizzata per contare il numero di eventi che accadono in un intervallo di tempo o spazio.
 #- **Distribuzione Binomiale**: Utilizzata per contare il numero di successi in un numero fisso di prove indipendenti.
 #%%
-import numpy as np
-import pandas as pd
+# Importazione delle librerie necessarie
+import numpy as np  # Libreria per operazioni numeriche e vettoriali
+import pandas as pd  # Libreria per la manipolazione di dati strutturati (es. tabelle)
 
-v1 = np.array([11,435,332,3,98,798,3])
+# Creazione di due array numpy
+v1 = np.array([11, 435, 332, 3, 98, 798, 3])
+v2 = np.array([2, 425, 32, 321, 928, 98, 13])
 
-v2 = np.array([2,425,32,321,928,98,13])
-check_vec1 = v1 > v2
-check_vec2 = 3 > v2
+# Confronto elemento per elemento tra v1 e v2
+check_vec1 = v1 > v2  # Restituisce un array di booleani dove ogni elemento è True se v1[i] > v2[i], altrimenti False
+print(check_vec1)
+# Confronto tra il numero 3 e ogni elemento di v2
+check_vec2 = 3 > v2  # Restituisce un array di booleani dove ogni elemento è True se 3 > v2[i], altrimenti False
+print(check_vec2)
 #%%
-confronto1 = check_vec1&check_vec2
-confronto1 = check_vec2|check_vec2
+# Operazioni logiche tra i due array di booleani
+confronto1 = check_vec1 & check_vec2  # AND logico: True solo se entrambe le condizioni sono vere
+print(confronto1)
+confronto2 = check_vec2 | check_vec2  # OR logico: True se almeno una delle condizioni è vera (in questo caso, è ridondante)
+print(confronto2)
 #%%
-v3 = np.array([-22,332,2,5,-55,332,23,-9,56,6])
-v3[v3<0]=0
-print(v3)
-#%%
-#con questo mi crea un sotovettore, elementi selezionati
-#in v3
-v3[[False,True,False,True,False,True,True,False,False,True]]
-#%%
-#np.random.normal(mean, std, size)
-x= np.random.normal(0,1,(2,2))
+# Creazione di un nuovo array numpy
+v3 = np.array([-22, 332, 2, 5, -55, 332, 23, -9, 56, 6])
 
+# Sostituzione di tutti gli elementi negativi in v3 con 0
+v3[v3 < 0] = 0
+print(v3)  # Stampa l'array modificato
+
+#%%
+# Selezione di elementi specifici da v3 utilizzando un array di booleani
+# Solo gli elementi corrispondenti a True nell'array booleano vengono selezionati
+v3[[False, True, False, True, False, True, True, False, False, True]]
+
+#%%
+# Generazione di numeri casuali con distribuzione normale (media 0, deviazione standard 1)
+x = np.random.normal(0, 1, (2, 2))  # Crea una matrice 2x2 con numeri casuali
 print(x)
-x= np.random.uniform(0,5,(2,2))
+
+# Generazione di numeri casuali con distribuzione uniforme (tra 0 e 5)
+x = np.random.uniform(0, 5, (2, 2))  # Crea una matrice 2x2 con numeri casuali
 print(x)
 
-
 #%%
-x1 = np.ones((2,2)) # Crea la matrice di tutti 1
+# Creazione di matrici con tutti gli elementi uguali a 1 o 0
+x1 = np.ones((2, 2))  # Crea una matrice 2x2 di tutti 1
 print(x1)
-x0 = np.zeros((2,2)) # Crea la matrice di tutti 0
+x0 = np.zeros((2, 2))  # Crea una matrice 2x2 di tutti 0
 print(x0)
-#%%
-np.reshape(A, (m, n))
-
 
 #%%
-#far attenzione a invertire la matrice
-np.inv(A)
+# Riformattazione di una matrice A in una nuova forma (m, n)
+# Nota: A deve essere definita prima di usare questa funzione
+# np.reshape(A, (m, n))
 
 #%%
-np.linalg.rank(A) 
-#restituisce il rango di A
-#utilizzato sopratutto per le norme
+# Inversione di una matrice A
+# Nota: A deve essere definita e invertibile
+# np.inv(A)
 
 #%%
+# Calcolo del rango di una matrice A
+# Nota: A deve essere definita
+# np.linalg.rank(A)  # Restituisce il rango della matrice A
 
-b=np.zeros(6) #crea un vettore colonna di e 
-A = np.zeros((6, 6)) #crea una matrice 6x6 di 0
+#%%
+# Creazione di un vettore colonna di zeri e una matrice 6x6 di zeri
+b = np.zeros(6)  # Crea un vettore colonna di 6 zeri
+A = np.zeros((6, 6))  # Crea una matrice 6x6 di zeri
 
-colnum= A.shape[0] #numero nigne
+# Ottenimento del numero di righe della matrice A
+colnum = A.shape[0]  # Restituisce il numero di righe (in questo caso 6)
 
-
-
+# Riempimento della matrice A con valori crescenti in ogni colonna
 for num in range(1, colnum):
-    colonna =np.ones(colnum)
-    colonna =num *colonna
-    A[:, num] = colonna
-    
-    #%%
-#vediamo la potenza del vettore
-for num in range(colum):
-    A[:,num] = num
-    
-    
-    
-#%%
-Data = pd.DataFrame({"nome":["Mario","Luca"],
-"cognome":["Rossi","Bianchi"],
-"eta":[45,38]})
-print(Data)
+    colonna = np.ones(colnum)  # Crea un vettore colonna di 1
+    colonna = num * colonna  # Moltiplica ogni elemento del vettore per num
+    A[:, num] = colonna  # Assegna il vettore alla colonna num-esima della matrice A
 
 #%%
-Data["nome"][1]
-
+# Riempimento della matrice A con valori crescenti in ogni colonna (versione alternativa)
+for num in range(colnum):
+    A[:, num] = num  # Assegna il valore num a tutta la colonna num-esima
 
 #%%
-df[[True,False,True,False]]
+# Creazione di un DataFrame (tabella) utilizzando pandas
+Data = pd.DataFrame({
+    "nome": ["Mario", "Luca"],  # Colonna "nome"
+    "cognome": ["Rossi", "Bianchi"],  # Colonna "cognome"
+    "eta": [45, 38]  # Colonna "eta"
+})
+print(Data)  # Stampa il DataFrame
+
+#%%
+# Accesso a un elemento specifico del DataFrame
+Data["nome"][1]  # Restituisce il valore nella colonna "nome" alla riga 1 (in questo caso "Luca")
+
+#%%
+# Selezione di righe specifiche del DataFrame utilizzando un array di booleani
+# Solo le righe corrispondenti a True nell'array booleano vengono selezionate
+df[[True, False, True, False]]  # Nota: df non è definito nel codice, dovrebbe essere Data
 
 #%%
 import numpy as np
