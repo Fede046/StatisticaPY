@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt  # Correzione dell'importazione
 
@@ -63,6 +62,7 @@ x = np.arange(1, 9)
 # Calcolo di y come quadrato di x
 y = x**2
 
+'''Creazione di una figura con una griglia 2x2 di Axes'''
 # Creazione di una figura con una griglia 2x2 di Axes
 fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(10, 8))  # figsize definisce le dimensioni della figura
 #fig, ax = plt.subplots(nrows=2, ncols=2)
@@ -88,10 +88,11 @@ fig.suptitle('Esempio di subplot con 4 grafici', fontsize=16)
 
 
 #aggiuntiva non necessaria
+'''Impostazione della scala per tutti i grafici'''
 # Impostazione della scala per tutti i grafici
 for a in ax.flat:
-    a.set_xlim([min(x), max(x)])  # Imposta i limiti dell'asse x
-    a.set_ylim([min(y), max(y)])  # Imposta i limiti dell'asse y
+   a.set_xlim([min(x), max(x)])  # Imposta i limiti dell'asse x
+   a.set_ylim([min(y), max(y)])  # Imposta i limiti dell'asse y
 
 # Aggiunta di un titolo generale alla figura
 fig.suptitle('Esempio di subplot con 4 grafici in scala', fontsize=16)
@@ -103,40 +104,47 @@ plt.tight_layout()
 # Mostra la figura
 plt.show()
 
-#%%
+# %%
 
+'''Introduzione agli istogrammi'''
+# Introduzione agli istogrammi
+# Questo script mostra come creare istogrammi con diverse impostazioni di bin.
+# Più bin si utilizzano, più dettagliato sarà l'istogramma, ma attenzione: troppi bin possono rendere il grafico meno leggibile.
 
-#introduzione agli istogrammi
-#più hist avete più il grafico viene bello!!!
-import numpy as np
-import matplotlib.pyplot as plt
+# Importazione delle librerie necessarie
+import numpy as np  # Libreria per operazioni numeriche, utile per generare dati casuali
+import matplotlib.pyplot as plt  # Libreria per la creazione di grafici
 
-# Definizione del numero di bin
-bin_number = [10, 25, 50, 100]
+# Definizione del numero di bin (intervalli) da utilizzare negli istogrammi
+bin_number = [10, 25, 50, 100]  # Lista che contiene i numeri di bin per i diversi istogrammi
 
 # Generazione di un vettore di numeri casuali con distribuzione normale
 randvett = np.random.normal(0, 1, 100000)  # Media = 0, Deviazione standard = 1, 100000 valori
+# randvett è un array di 100000 numeri casuali distribuiti normalmente (gaussiana)
 
 # Creazione di una figura con una griglia 2x2 di subplot
 fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(12, 8))
+# fig è la figura principale, ax è una matrice 2x2 di assi (subplot) per disegnare i grafici
 
 # Ciclo per creare gli istogrammi
 for k in range(len(bin_number)):
     if k <= 1:
         # Primi due istogrammi nella prima riga
         ax[0, k].hist(randvett, bins=bin_number[k], color='orange', alpha=0.7)
-        ax[0, k].set_title(f'Istogramma con {bin_number[k]} bin')
+        # hist() crea l'istogramma con il numero di bin specificato
+        # color='orange' imposta il colore dell'istogramma
+        # alpha=0.7 imposta la trasparenza del colore
+        ax[0, k].set_title(f'Istogramma con {bin_number[k]} bin')  # Imposta il titolo del subplot
     else:
         # Ultimi due istogrammi nella seconda riga
         ax[1, k % 2].hist(randvett, bins=bin_number[k], color='orange', alpha=0.7)
         ax[1, k % 2].set_title(f'Istogramma con {bin_number[k]} bin')
 
-# Regolazione dello spazio tra i subplot
+# Regolazione dello spazio tra i subplot per evitare sovrapposizioni
 plt.tight_layout()
 
-# Mostra la figura
+# Mostra la figura con i quattro istogrammi
 plt.show()
-
 #%%
 
 
@@ -146,18 +154,22 @@ import numpy as np
 # Creazione di un array v con valori da 1 a 10
 v = np.arange(1, 11)
 
+'''Estrazione casuale di 10 elementi dall'array v CON reinserimento'''
 # Estrazione casuale di 10 elementi dall'array v CON reinserimento
 # Questo significa che uno stesso elemento può essere estratto più volte
 estrazione_con_reinserimento = np.random.choice(v, 10)
 print("Estrazione con reinserimento:", estrazione_con_reinserimento)
 # Output esempio: [2 9 5 9 1 9 2 6 5 9]
 
+'''Estrazione casuale di 8 elementi dall'array v SENZA reinserimento'''
 # Estrazione casuale di 8 elementi dall'array v SENZA reinserimento
 # Questo significa che ogni elemento può essere estratto solo una volta
 estrazione_senza_reinserimento = np.random.choice(v, 8, replace=False)
 print("Estrazione senza reinserimento:", estrazione_senza_reinserimento)
 # Output esempio: [2 9 1 7 3 6 8 4]
 
+
+'''Estrazione di 10 elementi dall'array v CON reinserimento e probabilità specifiche'''
 # Estrazione con probabilità personalizzate
 # Creazione di un nuovo array v con valori da 1 a 3
 v = np.arange(1, 4)
@@ -188,6 +200,7 @@ x = np.array(("a", "a", "a", "b", "a", "b"))  # Vettore con valori qualitativi
 unique = np.unique(x)  # Trova i valori unici nel vettore
 count = [np.sum(x == el) for el in unique]  # Conta le occorrenze di ogni valore unico
 
+'''Rappresentazione con grafico a barre'''
 # Rappresentazione con grafico a barre
 plt.figure(figsize=(8, 4))  # Crea una nuova figura
 plt.bar(unique, count, color=['blue', 'orange'])  # Crea un grafico a barre
@@ -196,6 +209,7 @@ plt.xlabel("Valori unici")  # Etichetta per l'asse x
 plt.ylabel("Conteggio")  # Etichetta per l'asse y
 plt.show()  # Mostra il grafico a barre
 
+'''Rappresentazione con grafico a torta'''
 # Rappresentazione con grafico a torta
 plt.figure(figsize=(8, 4))  # Crea una nuova figura
 plt.pie(count, labels=unique, autopct='%1.1f%%', colors=['blue', 'orange'])  # Crea un grafico a torta
@@ -216,6 +230,7 @@ x = np.array(("a", "a", "a", "b", "a", "b"))  # Vettore con valori qualitativi
 unique = np.unique(x)  # Trova i valori unici nel vettore
 count = [np.sum(x == el) for el in unique]  # Conta le occorrenze di ogni valore unico
 
+'''# Creazione di una figura con due subplot affiancati'''
 # Creazione di una figura con due subplot affiancati
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))  # 1 riga, 2 colonne
 
