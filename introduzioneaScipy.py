@@ -246,10 +246,29 @@ for num in range(colnum):
 '''DATAFRAME CON pandas'''
 
 #%%
+'''Sistemare!!!!!!!!!!!!!!!'''
+
+
 # Importazione della libreria pandas, comunemente utilizzata per la manipolazione di dati in formato tabellare (DataFrame)
+
 import pandas as pd
 
+
+#possiamo vedere il dataframe come un insieme di tuple,
+#se voglio modificare il dataframe devo estrarlo e poi modificarlo e poi inserilo
+#In Statistica, si distinguono due principali gruppi di variabili:
+#Numeriche o Quantitative: tutte quelle variabili esprimibili
+#direttamente come numeri. Un esempio di variabili numeriche sono
+#l’e`a, l’anno corrente, il numero di chilometri percorso o il punteggio
+#assegnato ad una recensione.
+#Categoriche o Qualitative: tutte quelle variabili che non sono
+#esprimibili da numeri, ma solo descritte da stringhe. Un esempio sono
+#il nome, il cognome, il sesso, la cittadinanza o il nome di un piatto.
+#Per gestire variabili di tipo categorico in Pandas si usa il tipo category
+#che associa ad ogni categoria un valore/chiave.
 # Creazione di un DataFrame (tabella) utilizzando pandas
+#questo deve essere specifico del dataframe
+
 '''Cosa è un dataframe??'''
 # Un DataFrame è una struttura dati bidimensionale, simile a una tabella in un database o a un foglio di calcolo
 '''Creazione DataFrame'''
