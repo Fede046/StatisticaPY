@@ -64,43 +64,67 @@ df3
 
 df3.iloc[0:2]
 #%%
+'''Un dizionario'''
 #####################################################################
-#il dizionario è una variabile che cotine diverse informazioni e si contiene con una parentesi fgraffa
-#ma non sono un array, devono avre un tipo di dizionario con una sintassi, per far diventare questo un dataframe devo utilizzare 
-#pandas, è un array che ha dati di diverso tipo 
-#Create anew data frame
+# Un dizionario è una struttura dati che contiene coppie chiave-valore.
+# È definito utilizzando parentesi graffe {}.
+# A differenza di un array, un dizionario può contenere dati di tipo diverso.
+# Per convertire un dizionario in un DataFrame (una struttura tabellare), 
+# si utilizza la libreria Pandas. Un DataFrame è essenzialmente un array 
+# bidimensionale che può contenere dati di diverso tipo.
 
-mcu_data = {'Title': ['Ant-Man and the Wasp', 'Avengers: Infinity War', 'Black Panther', 'Thor: Ragnarok', 
+# Creiamo un nuovo DataFrame a partire da un dizionario
+mcu_data = {
+    'Title': ['Ant-Man and the Wasp', 'Avengers: Infinity War', 'Black Panther', 'Thor: Ragnarok', 
               'Spider-Man: Homecoming', 'Guardians of the Galaxy Vol. 2'],
-            'Year':[2018, 2018, 2018, 2017, 2017, 2017],
-            'Studio':['Beuna Vista', 'Beuna Vista', 'Beuna Vista', 'Beuna Vista', 'Sony', 'Beuna Vista'],
-            'Rating': [np.nan, np.nan, 0.96, 0.92, 0.92, 0.83]}
+    'Year': [2018, 2018, 2018, 2017, 2017, 2017],  # Anno di uscita del film
+    'Studio': ['Beuna Vista', 'Beuna Vista', 'Beuna Vista', 'Beuna Vista', 'Sony', 'Beuna Vista'],  # Studio di produzione
+    'Rating': [np.nan, np.nan, 0.96, 0.92, 0.92, 0.83]  # Valutazione del film (NaN indica valori mancanti)
+}
 
+# Convertiamo il dizionario in un DataFrame utilizzando Pandas
 df_mcu = pd.DataFrame(mcu_data)
-#la proprietà describe mi descrive il dataframe,
-df_mcu.describe
-#ritorna a dimensione
+
+# La proprietà `describe` fornisce statistiche descrittive del DataFrame
+df_mcu.describe()
+
+# La proprietà `shape` restituisce le dimensioni del DataFrame (righe, colonne)
 df_mcu.shape
-#ritorna i nomi delle etichette delle colonne 
-df_mcu.columns 
-#ritorna la colonna degli indici
+
+# La proprietà `columns` restituisce i nomi delle colonne del DataFrame
+df_mcu.columns
+
+# La proprietà `index` restituisce gli indici (etichette delle righe) del DataFrame
 df_mcu.index
-#la parte interna, ovvero il contenuto del mio dataframe 
-df_mcu.values 
 
-#queste sono alcune delle proprietà del dataframe
+# La proprietà `values` restituisce il contenuto del DataFrame come un array NumPy
+df_mcu.values
 
-#sto estraendo una colonna 
+# Queste sono alcune delle proprietà più comuni di un DataFrame.
+
+# Estraiamo una singola colonna dal DataFrame
 df_mcu['Title']
-#sto estrando la colonna titile e rating
+
+# Estraiamo più colonne specificandole in una lista
 df_mcu[['Title', 'Rating']]
 
-#posso estrarre una colonna da un elemento, operazione di slysing
+# Operazioni di slicing (selezione di sottoinsiemi di dati)
+# Estraiamo i primi due elementi della colonna 'Title'
 df_mcu['Title'][:2]
-df_mcu['Title'][4:]
-df_mcu['Title'][1:4]
-df_mcu.iloc[0,1]
-df_mcu.iloc[[2,4,5]]
 
+# Estraiamo gli elementi dalla posizione 4 in poi della colonna 'Title'
+df_mcu['Title'][4:]
+
+# Estraiamo gli elementi dalla posizione 1 alla 3 della colonna 'Title'
+df_mcu['Title'][1:4]
+
+# Utilizziamo `iloc` per accedere a un elemento specifico del DataFrame
+# `iloc[riga, colonna]` - qui stiamo accedendo alla prima riga e seconda colonna
+df_mcu.iloc[0, 1]
+
+# Utilizziamo `iloc` per selezionare righe specifiche (2, 4, 5)
+df_mcu.iloc[[2, 4, 5]]
+
+# Visualizziamo l'intero DataFrame
 df_mcu
 
