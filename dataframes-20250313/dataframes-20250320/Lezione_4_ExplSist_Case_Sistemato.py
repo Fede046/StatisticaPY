@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 
 #%%
 path = r"C:\\Users\\malse\\Desktop\\Secondo Anno Secondo Periodo\\Statistica\\StatisticaPY\\dataframes-20250313\\dataframes-20250320"
+path = r"C:/Users/malse/source/repos/StatisticaPY/dataframes-20250313/dataframes-20250320"
 data=pd.read_csv(os.path.join(path, 'kc_house_data.csv'))
 
 #%%
@@ -34,12 +35,33 @@ print(numerical_col.head())
 print(numerical_col.isnull().sum())     #Controlliamo la presenza di valori NaN
 
 #%%
-for col in ['price','sqft_living', 'sqft_above', 'sqft_basement', 'bedrooms', 'bathrooms', 'floors', 'view', 'condition', 'yr_built', 'grade']:
+# Analisi delle distribuzioni delle variabili numeriche tramite boxplot
+# Un boxplot è un grafico che mostra la distribuzione di una variabile numerica, evidenziando:
+# - La mediana (linea centrale).
+# - I quartili (scatola: Q1 e Q3).
+# - I valori minimo e massimo (baffi).
+# - Gli outlier (punti al di fuori dei baffi).
+
+# Iteriamo su una lista di colonne numeriche del dataset per creare un boxplot per ciascuna di esse.
+for col in ['price', 'sqft_living', 'sqft_above', 'sqft_basement', 'bedrooms', 'bathrooms', 'floors', 'view', 'condition', 'yr_built', 'grade']:
+    # Creiamo una nuova figura per ogni boxplot, con dimensioni 8x6 pollici.
     plt.figure(figsize=(8, 6))
-    sns.boxplot(x=data[col])
-    plt.title(f'Boxplot di {col}')
-    plt.show()
     
+    # Utilizziamo Seaborn per creare il boxplot della colonna corrente.
+    # `x=data[col]` specifica la variabile da visualizzare.
+    sns.boxplot(x=data[col])
+    
+    # Aggiungiamo un titolo al grafico, che include il nome della colonna analizzata.
+    plt.title(f'Boxplot di {col}')
+    
+    # Mostriamo il grafico.
+    plt.show()
+
+    # Osservazioni:
+    # - Il boxplot ci permette di identificare rapidamente la presenza di outlier, la dispersione dei dati
+    #   e la simmetria della distribuzione.
+    # - Ad esempio, se i baffi sono molto lunghi, significa che ci sono molti valori estremi (outlier).
+    # - Se la mediana non è al centro della scatola, la distribuzione è asimmetrica.
 #%%
 #Controlliamo quante case non hanno il bagno e le rimuoviamo dal dataset
 zero_bagni = data[data['bathrooms'] == 0]   
@@ -67,6 +89,9 @@ plt.ylabel('Price')
 
 #%%
 #Istogrammi per le variabili discrete
+# Le variabili discrete sono un tipo di variabile statistica che può assumere solo un numero finito o numerabile di valori distinti.
+#  Questi valori sono spesso interi (numeri interi) e rappresentano categorie, conteggi o risultati di processi che non possono essere 
+#  suddivisi ulteriormente in modo significativo.
 
 fig, axes = plt.subplots(2, 3, figsize=(18, 12))
 variabili=['view', 'condition', 'grade','bedrooms','bathrooms', 'floors']
@@ -86,6 +111,10 @@ plt.show()
 
 #%%
 #Istogramma con curva di densità per variabili continue
+# Differenza tra variabili discrete e continue:
+# Variabili discrete: Assumono valori distinti e separati. Esempi: numero di figli, numero di stanze.
+
+# Variabili continue: Possono assumere qualsiasi valore all'interno di un intervallo. Esempi: altezza, peso, temperatura.
 #molto interessante per il prezzo, che possono varire molto
 variables = ['price', 'sqft_living', 'sqft_above', 'sqft_basement']
 
@@ -102,14 +131,45 @@ plt.tight_layout()
 plt.show()  
 
 #%%
-#rappresentiamo la matrice di correlazione per indagare le relazione statistiche
-#
-Corr_data=numerical_col.drop(["zipcode","view"],axis=1) #togliamo variabili categoriche
+# Rappresentazione della matrice di correlazione per analizzare le relazioni statistiche tra le variabili numeriche
+# La matrice di correlazione è uno strumento utile per identificare relazioni lineari tra coppie di variabili.
 
-Corr_data=data.drop(["zipcode","view"],axis=1) #togliamo variabili categoriche
-C=Corr_data.corr()
-print(f"La dimensione della matrice di Correlazione è: {C.shape}")
-sns.heatmap(C, annot=False)
+# Rimuoviamo le variabili categoriche o non numeriche dal dataset.
+# In questo caso, "zipcode" e "view" sono variabili categoriche o non numeriche, quindi le escludiamo.
+#Corr_data = numerical_col.drop(["zipcode", "view"], axis=1)  # Usiamo solo colonne numeriche
+
+# Alternativamente, se volessimo usare l'intero dataset (escludendo solo colonne non numeriche):
+Corr_data = data.drop(["zipcode", "view","date"], axis=1)  # Rimuoviamo colonne non numeriche
+print(data.dtypes)
+# Calcoliamo la matrice di correlazione utilizzando il metodo .corr().
+# La matrice di correlazione è una tabella quadrata in cui ogni elemento rappresenta il coefficiente di correlazione
+# tra due variabili. Il coefficiente di correlazione varia tra -1 e 1:
+# - 1: Correlazione positiva perfetta.
+# - -1: Correlazione negativa perfetta.
+# - 0: Nessuna correlazione lineare.
+C = Corr_data.corr()
+
+# Stampiamo la dimensione della matrice di correlazione per verificare quante variabili sono state incluse.
+print(f"La dimensione della matrice di correlazione è: {C.shape}")
+
+# Visualizziamo la matrice di correlazione utilizzando una heatmap.
+# - `annot=False`: Non mostriamo i valori numerici all'interno delle celle per evitare affollamento.
+# - `cmap='coolwarm'`: Usiamo una scala di colori per rappresentare i valori di correlazione.
+#   (Colori caldi per correlazioni positive, colori freddi per correlazioni negative).
+sns.heatmap(C, annot=False, cmap='coolwarm')
+plt.title('Matrice di correlazione')
+plt.show()
+
+# Interpretazione della heatmap:
+# - Le aree con colori caldi (es. rosso) indicano una forte correlazione positiva tra le variabili.
+# - Le aree con colori freddi (es. blu) indicano una forte correlazione negativa.
+# - Le aree con colori neutri (es. bianco) indicano una correlazione vicina a zero.
+# - La diagonale principale è sempre 1, poiché ogni variabile è perfettamente correlata con sé stessa.
+
+# Esempi di osservazioni:
+# - Se due variabili hanno un coefficiente di correlazione vicino a 1 o -1, sono fortemente correlate.
+# - Se il coefficiente è vicino a 0, non c'è una relazione lineare significativa.
+# - Questa analisi è utile per identificare multicollinearità (correlazione alta tra feature) in modelli di machine learning.
 
 #%%
 #°L'analisi di data esplorativa si per dati che utilizzarememo dopo, di
