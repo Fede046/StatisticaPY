@@ -65,15 +65,11 @@ import pandas as pd
 import seaborn as sns
 
 # Imposta la directory di lavoro
-# path = r"C:\\Users\\malse\\Desktop\\Secondo Anno Secondo Periodo\\Statistica\\StatisticaPY\\dataframes-20250313\\dataframes-20250320"
-path = r"C:\Users\malse\source\repos\StatisticaPY\dataframes-20250313\dataframes-20250320"
-# os.chdir(path)
-
-os.chdir(path)
+os.chdir(os.getcwd()+"..")
 
 # Carica il dataset
 try:
-    data = pd.read_csv(os.path.join(path, "Orange Quality Data.csv"))
+    data = pd.read_csv("file:Orange Quality Data.csv")
 except FileNotFoundError:
     print("File non trovato. Controlla il percorso e il nome del file.")
     exit()
