@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Mar 22 16:29:45 2023
+
+Questa parte è in esame 100
+
 
 stima parametri media e varianza di una distribuzione normale.
 """
@@ -13,13 +15,23 @@ mu_true = 2.0
 sigma_true = 1.5
 
 # Generate some random data from the normal distribution
-
+#estrae un simple random sample della distribuzione
 
 data = norm.rvs(loc=mu_true, scale=sigma_true, size=1000,random_state=100)
+#random state serve per fissare il seme generatore nella generazione di numeri casulai,
+#non importante il numero, ma ci permette di generare a sessa sequenza di generazione
+#di numeri casuale
 
 # Define the log-likelihood function for the normal distribution
+#mi calcolo il logarimo della funzione di lighliwood, funzione che dipende da due 
+#paramteri theta 1 e theta 2,
+#Questa funzione ha bisogna di avere i dati e il tipo di distribuzione a cui i dati 
+#appartengono
 def log_likelihood(theta, data):
     mu, sigma = theta
+    #pdf della distibuzione normale, mentre la media e la deviazione 
+    #standard vemgono lasciate ingognite.
+    #Questi valori del logratimo vengono sommate
     log_lik = np.sum(norm.logpdf(data, loc=mu, scale=sigma))
     return log_lik
 
