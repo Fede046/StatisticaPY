@@ -23,10 +23,12 @@ clf = SVC(kernel='linear', random_state=42)
 clf.fit(X_train, y_train)
 
 # Predizione sul test set
+#predizione su dati che non ha mai visto
 y_pred = clf.predict(X_test)
 
 # Valutazione del modello
 print("Accuracy:", accuracy_score(y_test, y_pred))
+#mi da dei tipi di classificazione della classe shikit learn
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
 
 # Visualizzazione dei dati
@@ -39,6 +41,7 @@ plt.show()
 
 
 # Matrice di confusione
+#per ogni classe avete una variabile targhet, che mi dice itipi di iris che abbiamo classificato
 conf_matrix = confusion_matrix(y_test, y_pred)
 plt.figure(figsize=(6,5))
 sns.heatmap(conf_matrix, annot=True, cmap='Blues', fmt='d', xticklabels=iris.target_names, yticklabels=iris.target_names)
