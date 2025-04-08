@@ -17,13 +17,23 @@ sigma_true = 1.5
 # Generate some random data from the normal distribution
 #estrae un simple random sample della distribuzione
 
+#Tutte le funzioni che fanno parte della proprietà scipy, hanno un modo rvs che 
+#ci permette di estrearre un campione dealla funzione di probabilità
+#OGni distribuzione ha i suoi parametri che si trova nell'help di pyton
+
 data = norm.rvs(loc=mu_true, scale=sigma_true, size=1000,random_state=100)
 #random state serve per fissare il seme generatore nella generazione di numeri casulai,
 #non importante il numero, ma ci permette di generare a sessa sequenza di generazione
 #di numeri casuale
 
+#Per controllare una stima precisa bisogna salvare il seme generatore
+#%%
+#Definisco funzioni che fanno la mia stima
+
 # Define the log-likelihood function for the normal distribution
 #mi calcolo il logarimo della funzione di lighliwood, funzione che dipende da due 
+
+#Il vettore theta è conmposto da un numero di paramtri che voglio considerare
 #paramteri theta 1 e theta 2,
 #Questa funzione ha bisogna di avere i dati e il tipo di distribuzione a cui i dati 
 #appartengono
@@ -32,6 +42,11 @@ def log_likelihood(theta, data):
     #pdf della distibuzione normale, mentre la media e la deviazione 
     #standard vemgono lasciate ingognite.
     #Questi valori del logratimo vengono sommate
+    #Funzioni della funzione norm, prende i punti di input e calcola il logaritmo 
+    #della funzione normale
+    #Della dunzione L devo fare il logaritmo, calcolo il logarimo del prodotto,
+    #applica la proprietà dei logarimi ( log a*b = laga+logb)
+
     log_lik = np.sum(norm.logpdf(data, loc=mu, scale=sigma))
     return log_lik
 
