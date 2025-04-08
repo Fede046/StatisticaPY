@@ -53,16 +53,24 @@ def log_likelihood(theta, data):
 # Define the function to maximize the log-likelihood
 def neg_log_likelihood(theta, data):
     return -log_likelihood(theta, data)
-
+#%%
 # Use scipy's minimize function to find the maximum likelihood estimate
 from scipy.optimize import minimize
-
+#Funzione che è un metodo interativo: ha bisogno di un punto iniziale,
+#In generale è una lista a piacere, queste funzioni da minimizzare 
+#non sono funzioni complesse ma hanno tati minimi locali, e le mie funzioni convergono
+#in un minimo locale. Posso scegliere un punto inizale vicino alla soluzione esatta,
+#così è più probabile arriavre al minimo giusto (voglio trovare i minimo tra i minimi locali
+#ovvero il minimo globale)
 # Set the initial guess for the parameter values
 theta_0 = [1.0, 1.0]
 
-# Find the maximum likelihood estimate
-result = minimize(neg_log_likelihood, theta_0, args=(data,), method='Nelder-Mead')
 
+# Find the maximum likelihood estimate
+#il teszo e quarto parametri mettiamo sempre questi
+#il punto di minimo è nella variabile result
+result = minimize(neg_log_likelihood, theta_0, args=(data,), method='Nelder-Mead')
+#resul 0 è il primo paramtro stimato (mu) , il secondo (sigma)
 # Print the results
 print("True parameter values: mu={}, sigma={}".format(mu_true, sigma_true))
 print("MLE parameter values: mu={}, sigma={}".format(result.x[0], result.x[1]))

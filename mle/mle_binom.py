@@ -10,22 +10,34 @@ Stima del parametro p di una distribuzione binomiale
 
 # VERSION 2 
 # stimo solo il parametro theta della distribuzione binomiale
+#La funzione binomiale ha due paramtri, è una funzione discreta di probabilità, che rappresenta n processi di bernulli
+#dove ciascun processo ha una probabilità di successo. 
+
 
 import numpy as np
 from scipy.stats import binom
 
 # Define the true parameter values
+#Suppongo di conoscere uno dei due process (n) e stimare
 n = 100
-p_true = 0.3
+p_true = 0.3 #deve essere <3 pk probabilità
 
 # Generate some random data from the binomial distribution
+#Mi genera un campione 
+#n a sx dell'uguale è il nnome del parametro, quello che in ogni funzione binom 
+#una sorta di etichetta, una stringa costante,
+#il secondo n è il nome della vriabile asseganta in precedenza
+#quelli che prima si chaimavano loc e scale
 data = binom.rvs(n=n, p=p_true, size=1000, random_state=100)
 
 # Define the log-likelihood function for the binomial distribution
+#devo identificare theta che ha solo un valore
 def log_likelihood(theta, data):
     n = 100
-    p = theta
-    log_lik = np.sum(binom.logpmf(data, n=n, p=p))
+    #adesso il vettore dei parametri ha soltanto p
+    P = theta
+    #perchè una funzione discreta utilizzo logpmf
+    log_lik = np.sum(binom.logpmf(data, n=n, p=P))
     return log_lik
 
 # Define the function to maximize the log-likelihood
@@ -42,6 +54,8 @@ theta_0 = 0.5
 result = minimize(neg_log_likelihood, theta_0, args=(data,), method='Nelder-Mead')
 
 # Print the results
+#n non è stato stimato l'ho scritto, di solito è meglio stimare un parametro 
+#rispetto che a due
 print("True parameter values: n={}, p={}".format(n, p_true))
 print("MLE parameter values: n={}, p={}".format(n, result.x[0]))
 
