@@ -45,6 +45,7 @@ print(f"Valore stimato tramite MLE: n={n}, p={result.x[0]}")
 
 
 # Definiamo i valori veri dei parametri
+#In questo caso facciamo finta di non conoscerli
 mu_true = 1
 sigma_true = 1
 
@@ -62,6 +63,7 @@ def log_likelihood(theta, data):
 def neg_log_likelihood(theta, data):
     return -log_likelihood(theta, data)
 
+
 # Troviamo il massimo valore dei parametri, che non massimizzino la funzione
 theta_0 = [3.0, 2.0]   #guess_inziale 
 result = minimize(neg_log_likelihood, theta_0, args=(vettore_aleatorio,), method='Nelder-Mead')
@@ -72,6 +74,7 @@ print(f"Valori reali dei parametri: mu={mu_true}, sigma={sigma_true}")
 print(f"Valore stimato tramite MLE: mu={result.x[0]}, sigma={result.x[1]}")
 
 #%%
+
 #Esericizio 3 bis
 #Metodo tramite il calcolo a mano esplicito degli stimatori
  
