@@ -30,9 +30,11 @@ numerical_col=data.select_dtypes(include=num_type)
 #X dati da classificare e y classi tra cui classificare
 #harvest time è una variabile categorica (quindi da togliere) 
 #Quolity, è la nostra variabile di output non di input
+#la prima variabile è un dataframe la seconda variabile è una serie
 X=(numerical_col.drop(columns=['HarvestTime (days)', 'Quality (1-5)'])).values
 
 #x rappresenta il sotto dataset che vogliamo raffigurare
+
 y=classes
 
 #%%
@@ -40,12 +42,17 @@ y=classes
 #sto presendendo il 70% per il traning e 30% per il test, random state è il modo in cui vengono divisi i dati
 #train (adddestra) valuation(capire se i parametri che ha ottenuto durante l'addestramento sono buoni o no) 
 #test(test finale)
+#utilizziamo il parametro train size al posto di trest size
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, random_state=100)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, train_size=0.5, random_state=100)
 
 print(f"Le dimensioni di (y_val, y_test) sono {y_val.shape[0], y_test.shape[0]}")
 
+
+
 #%%
+#le classi sono ridotte da 5 a 2
+
 # Ripartiamo in modo che la somma sia esatta
 X_train, X_temp, y_train, y_temp = train_test_split(X, y, train_size=169, random_state=100)
 
@@ -88,6 +95,12 @@ plt.show()
 
 #%%
 #notiamo che se utilizziamo un random state diverso abbiamo una accuratezza diversa
+#cambiamo 4 volte il seme generatre, genero 4 diversi train test e test set, per ogniuno di questi faccio trning e testing
+#model. score fa predizione cambio delle metriche e il calcolo dell'acccuratezza
+#per vederel la ribustezza el modello devo provare diverse inseimi di train set e test set
+#la robustezza la cpisco in base alle metriche, se la devizione standrd è molto alta tra le 
+#accuratezza escono il modello non è robusto
+#invece se ottengo sempre il risultato 
 for random_state in [0, 42, 100, 200]:
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, random_state=random_state)
     model = SVC(kernel="linear", C=10)

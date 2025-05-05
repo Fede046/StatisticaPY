@@ -16,17 +16,31 @@ y = iris.target  # Tre classi
 
 #%%
 # Suddivisione in training e test set
+#X -> abbiamo solo le fechure
+#y -> abbiamo il targeth
+#train size indica a quale parcentuale del dataset è 
+#destinata al training
+#random state a piacere ma il numero cambia la sequenza
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Creazione e addestramento del modello SVM
+#classe che contine tutte le unità del modello
+#kernel lineare
+#cambiano kernel cambi l'accuratezza
 clf = SVC(kernel='linear', random_state=42)
+#clf = SVC(kernel='poly')
+#li abbiamo decise prima, feachur e target del traing e testing
 clf.fit(X_train, y_train)
 
 # Predizione sul test set
+#test mi predice la classe delle feachure del test set
+#quando faccio predizione le faccio solo sulle feachure del test set
+# e ottengo le etichette predette
 #predizione su dati che non ha mai visto
 y_pred = clf.predict(X_test)
 
 # Valutazione del modello
+#calcolo accuratezza, con y predette, e y corrette del test set
 print("Accuracy:", accuracy_score(y_test, y_pred))
 #mi da dei tipi di classificazione della classe shikit learn
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
@@ -41,6 +55,10 @@ plt.show()
 
 
 # Matrice di confusione
+#è una matricec 3x3: dove sulla diagonale per ogni classe, il numero
+#di elementi della classe, sono quelli che vanno a contribuire nell'errore di accuratezza 
+#nella diagonale la predetta è uguale alla vera
+#due fiore sono stati predetti classe virginica invece erano di versicolor
 #per ogni classe avete una variabile targhet, che mi dice itipi di iris che abbiamo classificato
 conf_matrix = confusion_matrix(y_test, y_pred)
 plt.figure(figsize=(6,5))
