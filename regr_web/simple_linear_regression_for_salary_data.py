@@ -10,6 +10,15 @@ Original file is located at
     ESEMPIO REGRESSIONE CON PARAMETRI APPRESI DA TRAINING
 """
 
+#Questo è un metodo alternativo:
+#Guardare example_statsmodel_simul_2
+#Cose da fare
+#Calcolare la retta-> Linear Regression
+#Disegno retta
+#R^2 ->r2_score(sklearn.rettics)
+#Normalità residui -> shapiro (sypy.stats)
+#Per il grafico di residui della normalità, guardare qqplo->sm.qqplot
+
 # import all the lib
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -63,6 +72,9 @@ from sklearn.linear_model import LinearRegression
 
 # Fitting the model
 lr = LinearRegression()
+#farlo su tutto il dataset non solo sul train, 
+#in questo caso lo facciamo su un dataset grande
+#noi lo facciamo su dataset piccoli
 lr.fit(X_train,y_train)
 
 # Predicting the Salary for the Training values
@@ -101,6 +113,7 @@ from sklearn.metrics import r2_score,mean_squared_error
 mse = mean_squared_error(y_test,y_pred_test)
 
 # Calculate R square vale
+#calcolo R^2
 rsq = r2_score(y_test,y_pred_test)
 
 print('mean squared error :',mse)

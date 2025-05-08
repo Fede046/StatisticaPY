@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-
+#In alternativa guardare simple_linear_regression_for_salary_data
 #Le 4 cose che bisogna fare
 #Calcolare corfficiente retta-> sm.ols
 #Disegnare retta
