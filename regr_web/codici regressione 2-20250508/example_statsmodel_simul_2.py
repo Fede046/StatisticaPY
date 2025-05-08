@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+
+#Le 4 cose che bisogna fare
+#Calcolare corfficiente retta-> sm.ols
+#Disegnare retta
+#Calcolare R^2->Summary dell'output di sm.ols
+#Normalità residui->Summary dell'output di sm.ols
+
 """
 Created on Sun Apr  2 10:29:54 2023
 
@@ -28,13 +36,18 @@ olsmod = sm.OLS(y, X)
 olsres = olsmod.fit()
 print(olsres.summary())
 
+#R-square mi dice quanto è valido,
+#vedo la bontà del modello
 #prediction in sample
 
 xn=np.linspace(x1[0],x1[49],100)
 
 ypred = olsres.params[0]+olsres.params[1]*xn
 
+#guardo i coefficient
 
+#per vedere se i residui sono normali guardo JB
+#JB se è sopra 0.5 i valori sono normali
 #graphical visualization
 
 import matplotlib.pyplot as plt
