@@ -6,7 +6,7 @@ import os
 from matplotlib import pyplot as plt
 
 #%%
-path="C:\\Users\\dario\\Desktop\\DARIO\\Tutorati\\Statistica Numerica"
+path="C:\\Users\\malse\\Documents\\GitHub\\StatisticaPY\\dataframes-20250313\\dataframes-20250320"
 data=pd.read_csv(os.path.join(path, 'kc_house_data.csv'))
 
 #%%

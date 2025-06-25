@@ -6,7 +6,9 @@ import os
 from matplotlib import pyplot as plt
 
 #%%
-path = r"C:/Users/malse/source/repos/StatisticaPY/Esercizi"
+#path = r"C:/Users/malse/source/repos/StatisticaPY/Esercizi"
+path = r"C:\Users\malse\Documents\GitHub\StatisticaPY\Esercizi"
+
 data=pd.read_csv(os.path.join(path, 'irish_animals.csv'))
 
 data.info()
