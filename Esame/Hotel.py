@@ -70,47 +70,6 @@ data = data[data['adr'] < 5000]
 
 # Verifica le nuove dimensioni
 #print(f"\nNuove dimensioni: {data.shape[0]} righe, {data.shape[1]} colonne")
-#%%
-
-#'#'''''''''''''''''''''''''
-#'#'''''''''''''''''''''''''
-#'#'''''''''''''''''''''''''
-
-#Vediamo se ci sono dei dati molto diversi da altri dati ed eventualemente togliere
-hotel_numerical_features = ['Head Size(cm^3)','Brain Weight(grams)']
-
-for col in hotel_numerical_features:
-    plt.figure(figsize=(10, 6))
-    sns.boxplot(x=numerical_col[col], color='skyblue')
-    # Calcola e mostra i valori statistici
-    valor = numerical_col[col].describe()
-    plt.title(f'Boxplot di {col}\n'
-              f'Media: {valor["mean"]:.2f} | '
-              f'Mediana: {valor["50%"]:.2f}\n'
-              f'Min: {valor["min"]:.2f} | '
-              f'Max: {valor["max"]:.2f}')
-
-    # Aggiungi linea per la media
-    plt.axvline(valor["mean"], color='red', linestyle='--', label='Media')
-    plt.axvline(valor["50%"], color='green', linestyle='-', label='Mediana')
-
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
-
-    # Stampa dettagli sugli outlier (opzionale)
-    Q1 = valor["25%"]
-    Q3 = valor["75%"]
-    IQR = Q3 - Q1
-    lower_bound = Q1 - 1.5 * IQR
-    upper_bound = Q3 + 1.5 * IQR
-    outliers = numerical_col[(numerical_col[col] < lower_bound) | (numerical_col[col] > upper_bound)]
-    #print(f"Numero di outlier in {col}: {len(outliers)}")
-    #print("=" * 50)
-#'#'''''''''''''''''''''''''
-#'#'''''''''''''''''''''''''
-#'#'''''''''''''''''''''''''
-#'#'''''''''''''''''''''''''
 
 #%%
 #Creiamo un subdataframe con le sole variabili numeriche
