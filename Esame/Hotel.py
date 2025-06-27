@@ -12,7 +12,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from scipy import stats
 
-
+# =============================================
+print('CARICARE DATASET')
+# =============================================
 # Download latest version
 #C:\Users\malse\.cache\kagglehub\datasets
 path = kagglehub.dataset_download("thedevastator/hotel-bookings-analysis")
@@ -35,6 +37,9 @@ N, d = data.shape
 #data.info()
 
 #%%
+# =============================================
+print('PRE-PROCESSING')
+# =============================================
 #Impostiamo variabili categoriche quelle che non sono
 num_type=['float64','int64']
 
@@ -46,7 +51,7 @@ for col in data.columns:
   #  print("-"*45)
 # Check the results
 #data.info()
-#%%
+
 #Le colonne agent e company hanno troppi NAN decido di toglierle
 data = data.drop(columns=['agent', 'company','previous_cancellations',
                           'previous_bookings_not_canceled','booking_changes','days_in_waiting_list'])  # Opzionale
@@ -72,6 +77,9 @@ data = data[data['adr'] < 5000]
 #print(f"\nNuove dimensioni: {data.shape[0]} righe, {data.shape[1]} colonne")
 
 #%%
+# =============================================
+print('EDA (PREPARAZIONE)')
+# =============================================
 #Creiamo un subdataframe con le sole variabili numeriche
 num_type=['float64','int64']
 numerical_col=data.select_dtypes(include=num_type)
@@ -80,8 +88,14 @@ numerical_col=data.select_dtypes(include=num_type)
 #Questa parte del codice serve a isolare le variabili numeriche dal 
 #dataset completo per poter effettuare analisi specifiche che richiedono dati quantitativi.
 #%%
-#Analisi univariata
-#Eventualemente togliere box plot e metterici istogrammi o grafici a torta
+
+# =============================================
+print('ANALISI UNIVARIATA (BOX PLOT, DIAGRAMMI A TORTA, ISTOGRAMMI)')
+# =============================================
+
+# =============================================
+print('BOX PLOT')
+# =============================================
 hotel_numerical_features = ['adr', 'lead_time', 'stays_in_weekend_nights', 
                            'stays_in_week_nights', 'adults', 'children', 
                            'babies', 'total_of_special_requests']
@@ -116,7 +130,9 @@ for col in hotel_numerical_features:
     #print("="*50)
     
     
-#Diagrammi a torta 
+# =============================================
+print('DIAGRAMMI A TORTA')
+# =============================================
 #Dati Discreti
 #Variabili che assumono valori interi e spesso contano occorrenze.
 colonne_Torta = ['is_canceled','adults', 'children',
@@ -136,7 +152,9 @@ colonne_Isto = ['adr', 'lead_time']
 
 fig, axes = plt.subplots(1, 2, figsize=(15, 10))
 
-# Crea gli istogrammi
+# =============================================
+print('ISTOGRAMMI')
+# =============================================
 for i, var in enumerate(colonne_Isto):
     sns.histplot(data=numerical_col, x=var, kde=True, color='green', ax=axes[i], bins=30)
 
@@ -163,7 +181,10 @@ plt.show()
 #La curva KDE smussa queste barre, fornendo una stima continua della distribuzione, più facile da interpretare.
     
 #%%
-#Analisi multivariata
+# =============================================
+print('Analisi multivariata (MATRICE DI CORRELAZIONE)')
+# =============================================
+#
 #Eventualmente sistemare colonne
 #Eventualemente inserire numeri
 #rappresentiamo la matrice di correlazione per indagare le relazione statistiche
@@ -218,30 +239,18 @@ print(f"La dimensione della matrice di Correlazione è: {C.shape}")
 plt.figure(figsize=(12, 10))
 
 # Crea la heatmap con annotazioni
-heatmap = sns.heatmap(
-    C, 
-    annot=True,            # Mostra i valori
-    fmt=".2f",            # Formato a 2 decimali
-    cmap='coolwarm',      # Mappa di colori
-    vmin=-1, vmax=1,      # Range valori
-    center=0,             # Centro della mappa
-    square=True,          # Celle quadrate
-    linewidths=.5,        # Linee tra le celle
-    cbar_kws={"shrink": .8},  # Dimensione barra colori
-    annot_kws={"size": 10}    # Dimensione testo annotazioni
-)
+sns.heatmap(C, annot=True, cbar=True, cmap='coolwarm', fmt='.2f')
 
 # Migliora la leggibilità
 plt.title('Matrice di correlazione', pad=20, fontsize=16)
-heatmap.set_xticklabels(heatmap.get_xticklabels(), rotation=45, ha='right')
-heatmap.set_yticklabels(heatmap.get_yticklabels(), rotation=0)
-
-plt.tight_layout()
 plt.show()
 
 
 #%%
-#Analisi bivariata
+# =============================================
+print('Analisi bivariata (SCATTER PLOT)')
+# =============================================
+#
 #scatter plot 
 #Esplora se prenotazioni con anticipo (lead_time) hanno prezzi più bassi/alti.
 plt.figure(figsize=(12, 6))
@@ -259,7 +268,10 @@ plt.ylabel('adr')
 
 
 #%%
-#Distribuzioni condizionate
+# =============================================
+print('Distribuzioni condizionate')
+# =============================================
+#
 # Calcolo delle medie globali
 media_cancellazioni = np.mean(numerical_col['is_canceled'])
 media_lead_time = np.mean(numerical_col['lead_time'])
@@ -332,11 +344,16 @@ plt.show()
 
 
 #%%
-
-#Classificazione
+# =============================================
+print('Classificazione')
+# =============================================
+# =============================================
+print('PREPARAZIONE DATASET PER LA CLASSIFICAZIONE (size->less_data)')
+# =============================================
 
 
 #Creo un dataset con meno campioni perchè faccio fatica a compilare
+
 # Campionamento stratificato -> eventualmente aumentare
 size = 0.001
 less_data = data.groupby('is_canceled', group_keys=False).apply(
@@ -360,78 +377,124 @@ y = less_data['is_canceled']
 
 # 2. Selezione features (basata sulla tua analisi EDA)
 X=(numerical_Col_Clf.drop(columns=['is_canceled'])).values
-
-#Dividiamo il modello in train, test, validation 
-#sto presendendo il 70% per il traning e 30% per il test, random state è il modo in cui vengono divisi i dati
-#train (adddestra) valuation(capire se i parametri che ha ottenuto durante l'addestramento sono buoni o no) 
-#test(test finale)
-#utilizziamo il parametro train size al posto di trest size
-X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, random_state=100)
-X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, train_size=0.5, random_state=100)
-
-print(f"Le dimensioni di (y_val, y_test) sono {y_val.shape[0], y_test.shape[0]}")
-
 #%%
+# =============================================
+print('4-5-6. Splitting Addestramento e Valutazione delle performance')
+# =============================================
 
-#Definiamo un modello
-#C è un iperparametro, controlla il trade-off tra margine ed errori di classificazione.
-k='linear'
-#Se funziona da documentare bene perchè  class_weight='balanced' l'ho preso da gpt
-model=SVC(kernel=k, C=10, class_weight='balanced')
 
+# Ricerca della migliore proporzione validation set
+best_accuracy = 0
+best_size = None
+results = {}
+
+# Prova diverse dimensioni per il validation set
+for val_size in [0.15, 0.20, 0.25]:  # 15%, 20%, 25% del totale
+    accuracies = []
+
+    for random_state in [0, 42, 100, 200]:
+        # Split 70% train, 30% temp
+        X_train, X_temp, y_train, y_temp = train_test_split(
+            X, y,
+            train_size=0.7,
+            random_state=random_state
+        )
+
+        # Split del 30% in validation e test
+        # Es: se val_size=0.2, test_size=0.1 (per mantenere 70-20-10)
+        test_size = 0.3 - val_size
+        X_val, X_test, y_val, y_test = train_test_split(
+            X_temp, y_temp,
+            test_size=test_size / (test_size + val_size),  # Calcolo proporzione
+            random_state=random_state
+        )
+
+        # Addestramento e valutazione
+        model = SVC(kernel="linear", C=10, random_state=random_state)
+        model.fit(X_train, y_train)
+        # valutazione dell'accuratezza sul validation set (valuto la roustezza) (sulla base di questo scelgo il train)
+        # Scegliere gli iperparametri e ottimizzare il modello.
+        val_accuracy = model.score(X_val, y_val)
+        # print(f"Random State: {random_state}, Accuracy: {accuracy:.4f}")
+        accuracies.append(val_accuracy)
+
+    # Calcola media e std
+    mean_acc = np.mean(accuracies)
+    results[val_size] = (mean_acc)
+
+    print(f"\nValidation size: {val_size:.0%}")
+    print(f"Mean accuracy: {mean_acc:.4f}")
+
+    # Aggiorna la migliore configurazione
+    if mean_acc > best_accuracy:
+        best_accuracy = mean_acc
+        best_size = val_size
+
+# Risultati finali
+print("\n" + "=" * 50)
+print(f"Miglior validation size: {best_size:.0%}")
+print(f"Best mean accuracy: {best_accuracy:.4f}")
+
+# 4. Addestramento finale con la migliore configurazione
+X_train, X_temp, y_train, y_temp = train_test_split(
+    X, y,
+    train_size=0.7,
+    random_state=42
+)
+X_val, X_test, y_val, y_test = train_test_split(
+    X_temp, y_temp,
+    test_size=(0.3 - best_size) / (0.3),  # Mantiene la proporzione ottimale
+    random_state=42
+)
+
+final_model = SVC(kernel="linear", C=10, random_state=42)
+final_model.fit(X_train, y_train)
 #%%
-#Addestriamo il modello sul training set
-#stiamo dando al modello delle coppie, in base alle variabili in output sono 0 1
-model.fit(X_train, y_train)
-#%%
+# =============================================
+print('6. Creazione dell heatmap della matrice di confusione')
+# =============================================
 
-#Valutazione della Performance
+#Prevediamo i dati e valutiamo le performance della previsione
 
-#Misuriamo l'accuratezza del modello
-#Nella variabile in input mettiamo solo x val, e predice l'output basandosi 
-#dalle variabili x val, 
-y_pred=model.predict(X_val)
+# Misuriamo l'accuratezza del modello
+# Nella variabile in input mettiamo solo x val, e predice l'output basandosi
+# dalle variabili x val,
+y_pred = final_model.predict(X_val)
 conf_mat = confusion_matrix(y_val, y_pred)
- 
+
 # Calcolare l'accuratezza sulla validation set
-accuracy_val = accuracy_score(y_val, y_pred)
-print(f"Accuracy sul validation set: {accuracy_val:.4f}")
+accuracy_val2 = accuracy_score(y_val, y_pred)
+print(f"Accuracy sul validation set: {accuracy_val2:.4f}")
 
-
-#%%
 # Creazione dell'heatmap della matrice di confusione
 plt.figure(figsize=(10, 8))
 sns.heatmap(conf_mat, annot=True, fmt='d', cmap='Oranges', cbar=False)
-plt.title(f'Confusion Matrix - Support Vector Machines with {k} kernel')
+plt.title('Confusion Matrix - Support Vector Machines with linear kernel')
 plt.xlabel('Predicted')
 plt.ylabel('True')
 plt.show()
 
 #%%
-#notiamo che se utilizziamo un random state diverso abbiamo una accuratezza diversa
-#cambiamo 4 volte il seme generatre, genero 4 diversi train test e test set, per ogniuno di questi faccio trning e testing
-#model. score fa predizione cambio delle metriche e il calcolo dell'acccuratezza
-#per vederel la ribustezza el modello devo provare diverse inseimi di train set e test set
-#la robustezza la cpisco in base alle metriche, se la devizione standrd è molto alta tra le 
-#accuratezza escono il modello non è robusto
-#invece se ottengo sempre il risultato
-#class_weight='balanced' aggiunto da gpt da verificarePerché class_weight='balanced'?
-#Documentazione ufficiale: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
-#Funzionamento: Assegna pesi automaticamente in modo inversamente proporzionale alle frequenze delle classi. Nel tuo caso:
-#Peso classe 0 (Non cancellato): ~1/0.62 ≈ 1.61
-#Peso classe 1 (Cancellato): ~1/0.38 ≈ 2.63
+# =============================================
+print('Valutazione finale sul test set')
+# =============================================
 
-for random_state in [0, 42, 100, 200]:
-    #ho tolto class_weight='balanced' perchè mi dava errore
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7,random_state=random_state)
-    model = SVC(kernel="linear", C=10)
-    model.fit(X_train, y_train)
-    accuracy = model.score(X_test, y_test)
-    print(f"Random State: {random_state}, Accuracy: {accuracy:.4f}")
+# Valutazione finale sul test set (SOLO UNA VOLTA!)
+# 3. Test finale (solo dopo aver scelto il modello ottimale!)
+# Valutare la performance finale del modello su dati completamente nuovi
+test_accuracy = final_model.score(X_test, y_test)
+print(f"\nAccuracy sul test set: {test_accuracy:.4f}")
+
 
 
 #%%
-#7.Hyperparameter Tuning
+# =============================================
+print('7. HYPERPARAMETER TUNING')
+# =============================================
+#Cos'è Hyperparameter Tuning?
+#L('Hyperparameter Tuning è il processo di ottimizzazione degli iperparametri '
+#  'di un modello (in questo caso, SVM) per '
+#  'trovare la configurazione che massimizza le prestazioni (es. accuratezza).)
 # Configurazioni da testare
 configurations = [
     {'kernel': 'linear', 'C': 10},
@@ -440,10 +503,6 @@ configurations = [
     {'kernel': 'rbf', 'C': 10, 'gamma': 'scale'}
 ]
 
-# Scaling dei dati (essenziale per SVM)
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-
 # Variabili per trovare la configurazione ottimale
 best_config = None
 best_accuracy = 0
@@ -451,32 +510,44 @@ best_accuracy = 0
 # Test per ogni configurazione
 for config in configurations:
     print(f"\n\nTesting configuration: {config}")
-    accuracies = []
+    accuracie7 = []
 
     for random_state in [0, 42, 100, 200]:
-        # Split dei dati
-        X_train, X_test, y_train, y_test = train_test_split(
-            X_scaled, y,
-            train_size=0.7,
-            random_state=random_state,
-            stratify=y  # Mantiene il bilanciamento delle classi
+        #############################
+        # Split dei dati (70% train, 30% temp)
+        X_train, X_temp, y_train, y_temp = train_test_split(
+            X, y,
+            test_size=0.3,
+            random_state=random_state
         )
 
-        # Creazione e addestramento modello
-        model = SVC(**config, random_state=100)
+        # Split ulteriore (15% validation, 15% test)
+        X_val, X_test, y_val, y_test = train_test_split(
+            X_temp, y_temp,
+            test_size=0.5,
+            random_state=random_state
+        )
+
+        # Addestramento modello
+        model = SVC(**config, random_state=random_state)
         model.fit(X_train, y_train)
 
-        # Valutazione
-        # Calcolare l'accuratezza sulla validation set (da valutare se corretto gpt dice)(X_test, y_test)
-        accuracy_val = accuracy_score(y_val, y_pred)
-        accuracies.append(accuracy_val)
-        print(f"Random State {random_state}: Accuracy = {accuracy_val:.4f}")
+
+        # Predizione sulla validation set
+        y_val_pred = model.predict(X_val)
+        # Valutazione sul VALIDATION set (come richiesto)
+        acc = accuracy_score(y_val, y_val_pred)
+        accuracie7.append(acc)
+
+        print(f"Random State {random_state}: Accuracy = {acc:.4f}")
+
 
     # Statistiche aggregate
-    mean_accuracy = np.mean(accuracies)
+    mean_accuracy = np.mean(accuracie7)
 
     print(f"\nConfiguration {config['kernel']} (degree {config.get('degree', 'N/A')}):")
     print(f"Mean Accuracy: {mean_accuracy:.4f}")
+
 
 
     # Aggiorna la migliore configurazione
@@ -490,13 +561,14 @@ print(f"Accuracy media: {best_accuracy:.4f}")
 
 #%%
 # =============================================
-# 8. STUDIO STATISTICO SUI RISULTATI (SOLO ACCURATEZZA)
+print('8. STUDIO STATISTICO SUI RISULTATI (SOLO ACCURATEZZA) (K)')
 # =============================================
+
 #(non penso si corretta la parte del cilo for 70 15 15 non me lo ricordavo)(molto lento con k=30)
 # Configurazione
 np.random.seed(100)  # Fisso il seed per riproducibilità
-k = 11  # Numero di ripetizioni >= 10 come richiesto
-accuracies = []
+k = 2  # Numero di ripetizioni >= 10 come richiesto
+accuracie8 = []
 
 # 1. Ripetizione addestramento e valutazione
 for i in range(k):
@@ -504,57 +576,55 @@ for i in range(k):
     X_train, X_temp, y_train, y_temp = train_test_split(
         X, y,
         test_size=0.3,
-        random_state=i,
-        stratify=y
+        random_state=i
     )
 
     # Split ulteriore (15% validation, 15% test)
     X_val, X_test, y_val, y_test = train_test_split(
         X_temp, y_temp,
         test_size=0.5,
-        random_state=i,
-        stratify=y_temp
+        random_state=i
     )
 
     # Addestramento modello
-    model = SVC(kernel='linear', C=10, class_weight='balanced', random_state=100)
+    model = SVC(kernel='linear', C=10, class_weight='balanced', random_state=i)
     model.fit(X_train, y_train)
 
     # Valutazione sul VALIDATION set (come richiesto)
     y_val_pred = model.predict(X_val)
     acc = accuracy_score(y_val, y_val_pred)
-    accuracies.append(acc)
+    accuracie8.append(acc)
 
     #Print per vedere l'accuratezza di ogni singolo State (serve per capire se va avanti)
     print(f"Random State {i}: Accuracy = {acc:.4f}")
 
 # Converti in array numpy per calcoli statistici
-accuracies = np.array(accuracies)
+accuracie8 = np.array(accuracie8)
 
 # 2. Statistica descrittiva
 print("\n=== ANALISI STATISTICA ===")
 print(f"Campioni (k): {k}")
-print(f"Media accuratezze: {np.mean(accuracies):.4f}")
-print(f"Deviazione standard: {np.std(accuracies):.4f}")
-print(f"Minimo: {np.min(accuracies):.4f}")
-print(f"Massimo: {np.max(accuracies):.4f}")
-print(f"Mediana: {np.median(accuracies):.4f}")
+print(f"Media accuratezze: {np.mean(accuracie8):.4f}")
+print(f"Deviazione standard: {np.std(accuracie8):.4f}")
+print(f"Minimo: {np.min(accuracie8):.4f}")
+print(f"Massimo: {np.max(accuracie8):.4f}")
+print(f"Mediana: {np.median(accuracie8):.4f}")
 
 # 3. Visualizzazione (Istogramma + Boxplot)
 plt.figure(figsize=(12, 5))
 
 # Istogramma
 plt.subplot(1, 2, 1)
-plt.hist(accuracies, bins=10, color='skyblue', edgecolor='black')
+plt.hist(accuracie8, bins=10, color='skyblue', edgecolor='black')
 plt.title('Distribuzione Accuratezze')
 plt.xlabel('Accuracy')
 plt.ylabel('Frequenza')
-plt.axvline(np.mean(accuracies), color='red', linestyle='--', label=f'Media: {np.mean(accuracies):.4f}')
+plt.axvline(np.mean(accuracie8), color='red', linestyle='--', label=f'Media: {np.mean(accuracie8):.4f}')
 plt.legend()
 
 # Boxplot
 plt.subplot(1, 2, 2)
-plt.boxplot(accuracies, vert=False)
+plt.boxplot(accuracie8, vert=False)
 plt.title('Boxplot Accuratezze')
 plt.xlabel('Accuracy')
 plt.tight_layout()
@@ -564,8 +634,8 @@ plt.show()
 
 confidence = 0.95
 ci = stats.t.interval(confidence, k-1,
-                     loc=np.mean(accuracies),
-                     scale=stats.sem(accuracies))
+                     loc=np.mean(accuracie8),
+                     scale=stats.sem(accuracie8))
 
 print("\n=== INFERENZA STATISTICA ===")
 print(f"Intervallo di confidenza al {confidence*100}%:")
