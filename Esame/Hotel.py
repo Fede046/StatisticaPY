@@ -355,7 +355,7 @@ print('PREPARAZIONE DATASET PER LA CLASSIFICAZIONE (size->less_data)')
 #Creo un dataset con meno campioni perchè faccio fatica a compilare
 
 # Campionamento stratificato -> eventualmente aumentare
-size = 0.001
+size = 0.01
 less_data = data.groupby('is_canceled', group_keys=False).apply(
     lambda x: x.sample(frac=size, random_state=100),
     include_groups=False
@@ -567,7 +567,7 @@ print('8. STUDIO STATISTICO SUI RISULTATI (SOLO ACCURATEZZA) (K)')
 #(non penso si corretta la parte del cilo for 70 15 15 non me lo ricordavo)(molto lento con k=30)
 # Configurazione
 np.random.seed(100)  # Fisso il seed per riproducibilità
-k = 2  # Numero di ripetizioni >= 10 come richiesto
+k = 12  # Numero di ripetizioni >= 10 come richiesto
 accuracie8 = []
 
 # 1. Ripetizione addestramento e valutazione
