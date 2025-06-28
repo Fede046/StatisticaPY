@@ -10,6 +10,7 @@ from scipy import stats
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 import statsmodels.api as sm
+import statsmodels.formula.api as smf
 
 #C:\Users\malse\.cache\kagglehub\datasets
 # Download latest version
@@ -145,7 +146,6 @@ print(f"MSE: {mse:.2f}")
 #%%
 #Analisi di Normalità dei Residui
 
-import statsmodels.formula.api as smf
 
 # Calcolo dei residui
 #Come da slide sulla regressione lineare semplice
@@ -163,12 +163,19 @@ plt.ylabel('Frequenza')
 plt.show()
 
 
-# QQ-plot dei residui
-plt.figure(figsize=(10, 6))
-sm.qqplot(results.resid, line='45')
-plt.title('QQ-plot dei Residui')
-plt.show()
+#Usata dalla prof
+# QQ-plot dei residui (viene male) (retta verticale)
+#plt.figure(figsize=(10, 6))
+#sm.qqplot(results.resid.values, line='45')
+#plt.title('QQ-plot dei Residui')
+#plt.show()
 
+# QQ-plot dei residui
+stats.probplot(results.resid,plot=plt)
+plt.xlabel("Quantili teorici")
+plt.ylabel("Residui")
+plt.title('Q-Q Plot dei residui')
+plt.show()
 
 # 4. Test di Shapiro-Wilk per la normalità
 shapiro_test = stats.shapiro(results.resid)

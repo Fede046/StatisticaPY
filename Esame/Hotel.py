@@ -53,7 +53,8 @@ for col in data.columns:
 #data.info()
 
 #Le colonne agent e company hanno troppi NAN decido di toglierle
-data = data.drop(columns=['agent', 'company','previous_cancellations',
+#come variabili temporali
+data = data.drop(columns=['required_car_parking_spaces','is_repeated_guest','arrival_date_day_of_month','arrival_date_week_number','index','arrival_date_year','agent', 'company','previous_cancellations',
                           'previous_bookings_not_canceled','booking_changes','days_in_waiting_list'])  # Opzionale
 
 
@@ -83,6 +84,7 @@ print('EDA (PREPARAZIONE)')
 #Creiamo un subdataframe con le sole variabili numeriche
 num_type=['float64','int64']
 numerical_col=data.select_dtypes(include=num_type)
+print("Colonne disponibili:", numerical_col.columns.tolist())
 #print(numerical_col.head())
 #numerical_col.info()
 #Questa parte del codice serve a isolare le variabili numeriche dal 
@@ -96,11 +98,11 @@ print('ANALISI UNIVARIATA (BOX PLOT, DIAGRAMMI A TORTA, ISTOGRAMMI)')
 # =============================================
 print('BOX PLOT')
 # =============================================
-hotel_numerical_features = ['adr', 'lead_time', 'stays_in_weekend_nights', 
-                           'stays_in_week_nights', 'adults', 'children', 
-                           'babies', 'total_of_special_requests']
+#hotel_numerical_features = ['adr', 'lead_time', 'stays_in_weekend_nights',
+                        #   'stays_in_week_nights', 'adults', 'children',
+#                           'babies', 'total_of_special_requests']
 
-for col in hotel_numerical_features:
+for col in numerical_col:
     plt.figure(figsize=(10, 6))
     sns.boxplot(x=numerical_col[col], color='skyblue')
  # Calcola e mostra i valori statistici
@@ -356,27 +358,28 @@ print('PREPARAZIONE DATASET PER LA CLASSIFICAZIONE (size->less_data)')
 
 # Campionamento stratificato -> eventualmente aumentare
 size = 0.01
-less_data = data.groupby('is_canceled', group_keys=False).apply(
+less_data = numerical_col.groupby('is_canceled', group_keys=False).apply(
     lambda x: x.sample(frac=size, random_state=100),
     include_groups=False
 )
 # Aggiungi manualmente la colonna di raggruppamento
-less_data['is_canceled'] = data.loc[less_data.index, 'is_canceled']
+less_data['is_canceled'] = numerical_col.loc[less_data.index, 'is_canceled']
 
 print("Colonne disponibili:", less_data.columns.tolist())
 
 # Verifica
-print("Distribuzione originale:\n", data['is_canceled'].value_counts(normalize=True))
+print(f"Numero totale di righe nel dataset ridotto: {len(less_data)}")
+print("Distribuzione originale:\n", numerical_col['is_canceled'].value_counts(normalize=True))
 print("\nDistribuzione campione:\n", less_data['is_canceled'].value_counts(normalize=True))
 
-#Creiamo un subdataframe con le sole variabili numeriche
-numerical_Col_Clf=less_data.select_dtypes(include=num_type)
+
 
 # 1. Preparazione target binario 
 y = less_data['is_canceled']
 
 # 2. Selezione features (basata sulla tua analisi EDA)
-X=(numerical_Col_Clf.drop(columns=['is_canceled'])).values
+X=(less_data.drop(columns=['is_canceled'])).values
+
 #%%
 # =============================================
 print('4-5-6. Splitting Addestramento e Valutazione delle performance')
@@ -587,7 +590,7 @@ for i in range(k):
     )
 
     # Addestramento modello
-    model = SVC(kernel='linear', C=10, class_weight='balanced', random_state=i)
+    model = SVC(kernel='linear', C=10,random_state=i)
     model.fit(X_train, y_train)
 
     # Valutazione sul VALIDATION set (come richiesto)
