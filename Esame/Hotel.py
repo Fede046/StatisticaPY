@@ -40,6 +40,9 @@ N, d = data.shape
 # =============================================
 print('PRE-PROCESSING')
 # =============================================
+# =============================================
+print('VARIABILI CATEGORICHE')
+# =============================================
 #Impostiamo variabili categoriche quelle che non sono
 num_type=['float64','int64']
 
@@ -51,7 +54,9 @@ for col in data.columns:
   #  print("-"*45)
 # Check the results
 #data.info()
-
+# =============================================
+print('RIMOZIONE COLONNE NON NECESSARIE E VALORI NAN')
+# =============================================
 #Le colonne agent e company hanno troppi NAN decido di toglierle
 #come variabili temporali
 data = data.drop(columns=['required_car_parking_spaces','is_repeated_guest','arrival_date_day_of_month','arrival_date_week_number','index','arrival_date_year','agent', 'company','previous_cancellations',
@@ -66,16 +71,36 @@ total_NaN = data.isnull().sum()
 # Rimuovi righe con NaN (sovrascrivi 'data')
 data = data.dropna()  # Oppure: data.dropna(inplace=True)
 
-# Filtra adr > 0
-data = data[data['adr'] > 0]
+# Verifica i NaN dopo la pulizia
+print("\nValori NaN dopo la pulizia:")
+print(data.isnull().sum())
+
+# =============================================
+print('RIMOZIONE VALORI NEGATIVI')
+# =============================================
+# Identifica tutte le colonne numeriche
+col_num = data.select_dtypes(include=num_type).columns
+
+# Filtra il dataset mantenendo solo righe con valori positivi in tutte le colonne numeriche
+mask = (data[col_num] >= 0).all(axis=1)
+data = data[mask]
+
+# Verifica che non ci siano più valori negativi
+print("\nControllo valori negativi dopo la pulizia:")
+for col in col_num:
+    neg_count = (data[col] < 0).sum()
+    print(f"{col}: {neg_count} valori negativi")
+
+# =============================================
+print('TOLGO OUTLIER')
+# =============================================
+
 #tolgo un dato che è troppo diverso dagli altri nel caso dell'adr
 data = data[data['adr'] < 5000]
-# Verifica i NaN dopo la pulizia
-#print("\nValori NaN dopo la pulizia:")
-#print(data.isnull().sum())
+
 
 # Verifica le nuove dimensioni
-#print(f"\nNuove dimensioni: {data.shape[0]} righe, {data.shape[1]} colonne")
+print(f"\nNuove dimensioni: {data.shape[0]} righe, {data.shape[1]} colonne")
 
 #%%
 # =============================================
@@ -357,7 +382,7 @@ print('PREPARAZIONE DATASET PER LA CLASSIFICAZIONE (size->less_data)')
 #Creo un dataset con meno campioni perchè faccio fatica a compilare
 
 # Campionamento stratificato -> eventualmente aumentare
-size = 0.01
+size = 0.06 #0.02 creazione della matrice di confusione con circa 350 dati
 less_data = numerical_col.groupby('is_canceled', group_keys=False).apply(
     lambda x: x.sample(frac=size, random_state=100),
     include_groups=False
@@ -524,10 +549,10 @@ for config in configurations:
             random_state=random_state
         )
 
-        # Split ulteriore (15% validation, 15% test)
+        # Split ulteriore (con la proporzione ottimale)
         X_val, X_test, y_val, y_test = train_test_split(
             X_temp, y_temp,
-            test_size=0.5,
+            test_size=(0.3 - best_size) / (0.3),
             random_state=random_state
         )
 
@@ -582,15 +607,15 @@ for i in range(k):
         random_state=i
     )
 
-    # Split ulteriore (15% validation, 15% test)
+    # Split ulteriore (col best size)
     X_val, X_test, y_val, y_test = train_test_split(
         X_temp, y_temp,
-        test_size=0.5,
+        test_size=(0.3 - best_size) / (0.3),
         random_state=i
     )
 
     # Addestramento modello
-    model = SVC(kernel='linear', C=10,random_state=i)
+    model = SVC(**best_config)
     model.fit(X_train, y_train)
 
     # Valutazione sul VALIDATION set (come richiesto)
