@@ -16,7 +16,7 @@ from scipy import stats
 print('CARICARE DATASET')
 # =============================================
 # Download latest version
-#C:\Users\malse\.cache\kagglehub\datasets
+#C:\Users\user\.cache\kagglehub\datasets
 path = kagglehub.dataset_download("thedevastator/hotel-bookings-analysis")
 
 #print("Path to dataset files:", path)
@@ -25,7 +25,6 @@ path = kagglehub.dataset_download("thedevastator/hotel-bookings-analysis")
 # Load the dataset using the correct filename
 data = pd.read_csv(os.path.join(path, "hotel_bookings.csv"))
 
-# Display the first few rows to verify it loaded correctly
 #print(data.head())
 #%%
 #Dimensioni del dataset
@@ -60,7 +59,7 @@ print('RIMOZIONE COLONNE NON NECESSARIE E VALORI NAN')
 #Le colonne agent e company hanno troppi NAN decido di toglierle
 #come variabili temporali
 data = data.drop(columns=['required_car_parking_spaces','is_repeated_guest','arrival_date_day_of_month','arrival_date_week_number','index','arrival_date_year','agent', 'company','previous_cancellations',
-                          'previous_bookings_not_canceled','booking_changes','days_in_waiting_list'])  # Opzionale
+                          'previous_bookings_not_canceled','booking_changes','days_in_waiting_list'])
 
 
 # Cerchiamo i valori NaN
@@ -103,6 +102,36 @@ data = data[data['adr'] < 5000]
 print(f"\nNuove dimensioni: {data.shape[0]} righe, {data.shape[1]} colonne")
 
 #%%
+#ELENCO DELLE COLONNE RIMASTE DALLA PULIZIA CON LE RELATIVE SPIEAGAZIONI
+# Variabile target (dipendente) - Indica se la prenotazione è stata cancellata (1) o no (0)
+#'is_canceled',
+
+# Numero di giorni tra la data di prenotazione e la data di arrivo
+#'lead_time',
+
+# Average Daily Rate - Prezzo medio giornaliero della camera
+#'adr',
+
+# Numero di notti di soggiorno durante il weekend (Sabato/Domenica)
+#'stays_in_weekend_nights',
+
+# Numero di notti di soggiorno durante i giorni lavorativi (Lunedì-Venerdì)
+#'stays_in_week_nights',
+
+# Numero di adulti nella prenotazione
+#'adults',
+
+# Numero di bambini nella prenotazione
+#'children',
+
+# Numero di neonati nella prenotazione
+#'babies',
+
+# Numero di richieste speciali (es. lettino, camere vicine)
+#'total_of_special_requests'
+
+
+#%%
 # =============================================
 print('EDA (PREPARAZIONE)')
 # =============================================
@@ -112,7 +141,7 @@ numerical_col=data.select_dtypes(include=num_type)
 print("Colonne disponibili:", numerical_col.columns.tolist())
 #print(numerical_col.head())
 #numerical_col.info()
-#Questa parte del codice serve a isolare le variabili numeriche dal 
+#Questa parte del codice serve a isolare le variabili numeriche dal
 #dataset completo per poter effettuare analisi specifiche che richiedono dati quantitativi.
 #%%
 
@@ -123,47 +152,42 @@ print('ANALISI UNIVARIATA (BOX PLOT, DIAGRAMMI A TORTA, ISTOGRAMMI)')
 # =============================================
 print('BOX PLOT')
 # =============================================
-#hotel_numerical_features = ['adr', 'lead_time', 'stays_in_weekend_nights',
-                        #   'stays_in_week_nights', 'adults', 'children',
-#                           'babies', 'total_of_special_requests']
 
 for col in numerical_col:
     plt.figure(figsize=(10, 6))
     sns.boxplot(x=numerical_col[col], color='skyblue')
- # Calcola e mostra i valori statistici
+ # Calcolo e mostro i valori statistici
     valor = numerical_col[col].describe()
     plt.title(f'Boxplot di {col}\n'
              f'Media: {valor["mean"]:.2f} | '
              f'Mediana: {valor["50%"]:.2f}\n'
              f'Min: {valor["min"]:.2f} | '
              f'Max: {valor["max"]:.2f}')
-    
-    # Aggiungi linea per la media
+
+    # Aggiungo linea per la media
     plt.axvline(valor["mean"], color='red', linestyle='--', label='Media')
     plt.axvline(valor["50%"], color='green', linestyle='-', label='Mediana')
-    
+
     plt.legend()
     plt.tight_layout()
     plt.show()
 
-    # Stampa dettagli sugli outlier (opzionale)
+    # Stampo dettagli sugli outlier
     Q1 = valor["25%"]
     Q3 = valor["75%"]
     IQR = Q3 - Q1
     lower_bound = Q1 - 1.5 * IQR
     upper_bound = Q3 + 1.5 * IQR
     outliers = numerical_col[(numerical_col[col] < lower_bound) | (numerical_col[col] > upper_bound)]
-   # print(f"Numero di outlier in {col}: {len(outliers)}")
-    #print("="*50)
-    
-    
+    print(f"Numero di outlier in {col}: {len(outliers)}")
+    print("="*50)
+
+
 # =============================================
 print('DIAGRAMMI A TORTA')
 # =============================================
-#Dati Discreti
-#Variabili che assumono valori interi e spesso contano occorrenze.
-colonne_Torta = ['is_canceled','adults', 'children',
-'babies', 'total_of_special_requests', 'stays_in_weekend_nights','stays_in_week_nights']
+#Diagramma a Torta solo per la variabile target
+colonne_Torta = ['is_canceled']
 for i, col in enumerate(colonne_Torta):
     temp = numerical_col[col].value_counts()
     plt.figure(figsize=(8,6))
@@ -171,21 +195,23 @@ for i, col in enumerate(colonne_Torta):
     plt.title(f'Distribuzione di {col}')
     plt.show()
 
-
-#Istogramma con curva di densità per variabili continue
-#Dati Continui
-#Variabili che possono assumere qualsiasi valore in un intervallo (numeri reali).
-colonne_Isto = ['adr', 'lead_time']
-
-fig, axes = plt.subplots(1, 2, figsize=(15, 10))
-
 # =============================================
 print('ISTOGRAMMI')
 # =============================================
-for i, var in enumerate(colonne_Isto):
-    sns.histplot(data=numerical_col, x=var, kde=True, color='green', ax=axes[i], bins=30)
+#Istogramma per le altre variabili
+colonne_Isto = ['adr', 'lead_time', 'stays_in_weekend_nights','stays_in_week_nights',
+                'adults', 'children',
+                'babies', 'total_of_special_requests'
+                ]
+#Impostazioni del plot per genare più plot in un unico plot
+fig, axes = plt.subplots(2, 4, figsize=(15, 10))
+axes = axes.ravel()
 
-    # Aggiungi linee per media e mediana
+#Ciclo for che genera tutti gli istogrammi  in un unico plot
+for i, var in enumerate(colonne_Isto):
+    sns.histplot(data=numerical_col, x=var,  color='green', ax=axes[i], bins=30)
+
+    # Aggiungo linee per media e mediana
     mean_val = numerical_col[var].mean()
     median_val = numerical_col[var].median()
 
@@ -193,7 +219,7 @@ for i, var in enumerate(colonne_Isto):
     axes[i].axvline(median_val, color='green', linestyle='-', label=f'Mediana: {median_val:.1f}')
 
     # Formattazione
-    axes[i].set_title(f'Distribuzione di {var}\n(Skewness: {data[var].skew():.2f})')
+    axes[i].set_title(f'Distribuzione di {var}')
     axes[i].set_xlabel('Valore')
     axes[i].set_ylabel('Frequenza')
     axes[i].legend()
@@ -202,73 +228,23 @@ for i, var in enumerate(colonne_Isto):
 plt.tight_layout()
 plt.show()
 
-# Visualizzare la distribuzione in modo più fluido
-#L'istogramma mostra la frequenza dei dati in "bin" discreti (barre), che dipendono dalla scelta del numero di intervalli.
-
-#La curva KDE smussa queste barre, fornendo una stima continua della distribuzione, più facile da interpretare.
-    
 #%%
 # =============================================
 print('Analisi multivariata (MATRICE DI CORRELAZIONE)')
 # =============================================
 #
-#Eventualmente sistemare colonne
-#Eventualemente inserire numeri
-#rappresentiamo la matrice di correlazione per indagare le relazione statistiche
-#Corr_data=data.select_dtypes(include=num_type) #togliamo variabili categoriche
-
-correlation_columns = [
-    # Variabile target (dipendente) - Indica se la prenotazione è stata cancellata (1) o no (0)
-    'is_canceled',         
-    
-    # Numero di giorni tra la data di prenotazione e la data di arrivo
-    # (Potenziale predittore forte per cancellazioni)
-    'lead_time',           
-    
-    # Average Daily Rate - Prezzo medio giornaliero della camera
-    # (Indicatore del valore economico della prenotazione)
-    'adr',                 
-    
-    # Numero di notti di soggiorno durante il weekend (Sabato/Domenica)
-    # (Può influenzare cancellazioni e prezzi)
-    'stays_in_weekend_nights',
-    
-    # Numero di notti di soggiorno durante i giorni lavorativi (Lunedì-Venerdì)
-    'stays_in_week_nights',
-    
-    # Numero di adulti nella prenotazione
-    # (Impatto su costi e complessità della prenotazione)
-    'adults',
-    
-    # Numero di bambini nella prenotazione
-    # (Potrebbe aumentare probabilità di cancellazione per imprevisti)
-    'children',
-    
-    # Numero di neonati nella prenotazione
-    # (Fattore di rischio per cancellazioni last-minute)
-    'babies',
-    
-    
-    # Numero di richieste speciali (es. lettino, camere vicine)
-    # (Clienti più esigenti potrebbero avere diverso comportamento)
-    'total_of_special_requests'
-]
-
-
-Corr_data = numerical_col[correlation_columns]
-C=Corr_data.corr()
+#Correlazione tra le variabili
+C=numerical_col.corr()
 print(f"La dimensione della matrice di Correlazione è: {C.shape}")
 
-#sns.heatmap(C, annot=False)
 
-#Aggiunto da GPT eventualemnte togliere
-# Configura il plot
+# Configuro il plot
 plt.figure(figsize=(12, 10))
 
-# Crea la heatmap con annotazioni
+# Creo la heatmap con annotazioni
 sns.heatmap(C, annot=True, cbar=True, cmap='coolwarm', fmt='.2f')
 
-# Migliora la leggibilità
+# Miglioro la leggibilità
 plt.title('Matrice di correlazione', pad=20, fontsize=16)
 plt.show()
 
@@ -278,15 +254,15 @@ plt.show()
 print('Analisi bivariata (SCATTER PLOT)')
 # =============================================
 #
-#scatter plot 
-#Esplora se prenotazioni con anticipo (lead_time) hanno prezzi più bassi/alti.
+#Scatter plot
+#Esploro se prenotazioni con anticipo (lead_time) hanno prezzi più bassi/alti.
 plt.figure(figsize=(12, 6))
 plt.scatter(numerical_col['lead_time'], numerical_col['adr'], alpha=0.5, color='red')
 plt.title('Relazione tra lead_time e adr')
 plt.xlabel('lead_time')
 plt.ylabel('adr')
 
-#in presenza di bambini si aumenta il prezzo (adr)
+#in presenza di bambini si aumenta il prezzo (adr)?
 plt.figure(figsize=(12, 6))
 plt.scatter(numerical_col['children'], numerical_col['adr'], alpha=0.5, color='blue')
 plt.title('Relazione tra children e adr')
@@ -296,7 +272,7 @@ plt.ylabel('adr')
 
 #%%
 # =============================================
-print('Distribuzioni condizionate')
+print('Distribuzioni delle medie condizionate')
 # =============================================
 #
 # Calcolo delle medie globali
@@ -332,43 +308,6 @@ plt.xlabel('Giorni di anticipo')
 plt.tight_layout()
 plt.show()
 
-# ANALISI 
-# 1. Tasso Globale di Cancellazioni (37.58%)
-# Più di una prenotazione su tre viene cancellata.
-# Questo rappresenta un problema operativo serio per gli hotel, che possono perdere revenue
-# e avere difficoltà nella pianificazione delle risorse (es. personale, camere libere).
-# Strategie raccomandate:
-# - Introdurre depositi non rimborsabili
-# - Incentivare prenotazioni con clausole di cancellazione più rigide
-
-# 2. Cancellazioni per Prenotazioni con Anticipo Elevato
-# Quando il lead_time (giorni tra prenotazione e soggiorno) supera i 105 giorni,
-# il tasso di cancellazione sale al 51.30%, cioè un +13.72% rispetto alla media globale.
-# Questo significa che le prenotazioni fatte con largo anticipo (> 3 mesi)
-# sono il 36.5% più soggette a cancellazione rispetto alla media.
-# Possibili cause:
-# - Cambi di programma nel tempo
-# - Clienti che trovano offerte migliori nel frattempo
-# - Minor senso di "impegno" verso la prenotazione
-# Azioni consigliate:
-# - Politiche più rigide per prenotazioni early-bird (es. penalità maggiori)
-# - Sconti per prenotazioni non cancellabili (es. tariffe "non-refundable")
-
-
-#3.Cancellazioni per molte richieste speciali (>0.57 richieste) - 22.01%
-#Paradosso apparente: Meno richieste speciali = più cancellazioni (l'opposto di quanto ci si aspetterebbe)
-#Possibili spiegazioni:
-#Clienti con richieste specifiche (es. camere per disabili, letti aggiuntivi) hanno maggiore necessità e quindi minore propensione a cancellare
-#Le richieste speciali potrebbero indicare viaggi "importanti" (matrimoni, eventi) meno cancellabili
-#Implicazioni pratiche:
-#Le politiche che limitano le richieste speciali potrebbero aumentare le cancellazioni
-#Valorizzare le richieste speciali come strumento di fidelizzazione
-
-# CONCLUSIONE:
-# Le cancellazioni sono un problema consistente per gli hotel.
-# L'anticipo della prenotazione è un fattore molto più rilevante del prezzo nel predire cancellazioni.
-# Servono politiche mirate soprattutto per le prenotazioni con lead_time elevato.
-
 
 #%%
 # =============================================
@@ -382,12 +321,12 @@ print('PREPARAZIONE DATASET PER LA CLASSIFICAZIONE (size->less_data)')
 #Creo un dataset con meno campioni perchè faccio fatica a compilare
 
 # Campionamento stratificato -> eventualmente aumentare
-size = 0.06 #0.02 creazione della matrice di confusione con circa 350 dati
+size = 0.02 #0.02 creazione della matrice di confusione con circa 350 dati
 less_data = numerical_col.groupby('is_canceled', group_keys=False).apply(
     lambda x: x.sample(frac=size, random_state=100),
     include_groups=False
 )
-# Aggiungi manualmente la colonna di raggruppamento
+# Aggiungo manualmente la colonna di raggruppamento
 less_data['is_canceled'] = numerical_col.loc[less_data.index, 'is_canceled']
 
 print("Colonne disponibili:", less_data.columns.tolist())
@@ -399,7 +338,7 @@ print("\nDistribuzione campione:\n", less_data['is_canceled'].value_counts(norma
 
 
 
-# 1. Preparazione target binario 
+# 1. Preparazione target binario
 y = less_data['is_canceled']
 
 # 2. Selezione features (basata sulla tua analisi EDA)
@@ -446,7 +385,7 @@ for val_size in [0.15, 0.20, 0.25]:  # 15%, 20%, 25% del totale
         # print(f"Random State: {random_state}, Accuracy: {accuracy:.4f}")
         accuracies.append(val_accuracy)
 
-    # Calcola media e std
+    # Calcolo media
     mean_acc = np.mean(accuracies)
     results[val_size] = (mean_acc)
 
@@ -519,10 +458,7 @@ print(f"\nAccuracy sul test set: {test_accuracy:.4f}")
 # =============================================
 print('7. HYPERPARAMETER TUNING')
 # =============================================
-#Cos'è Hyperparameter Tuning?
-#L('Hyperparameter Tuning è il processo di ottimizzazione degli iperparametri '
-#  'di un modello (in questo caso, SVM) per '
-#  'trovare la configurazione che massimizza le prestazioni (es. accuratezza).)
+
 # Configurazioni da testare
 configurations = [
     {'kernel': 'linear', 'C': 10},
@@ -594,8 +530,7 @@ print('8. STUDIO STATISTICO SUI RISULTATI (SOLO ACCURATEZZA) (K)')
 
 #(non penso si corretta la parte del cilo for 70 15 15 non me lo ricordavo)(molto lento con k=30)
 # Configurazione
-np.random.seed(100)  # Fisso il seed per riproducibilità
-k = 12  # Numero di ripetizioni >= 10 come richiesto
+k = 5  # Numero di ripetizioni >= 10 come richiesto
 accuracie8 = []
 
 # 1. Ripetizione addestramento e valutazione
@@ -637,6 +572,16 @@ print(f"Deviazione standard: {np.std(accuracie8):.4f}")
 print(f"Minimo: {np.min(accuracie8):.4f}")
 print(f"Massimo: {np.max(accuracie8):.4f}")
 print(f"Mediana: {np.median(accuracie8):.4f}")
+#aggiungere identifica ottimale
+
+#Identificazione configurazione ottimale
+best_index = np.argmax(accuracie8)
+best_random_state = best_index
+best_accuracy = accuracie8[best_index]
+
+print("\n=== MIGLIORE CONFIGURAZIONE ===")
+print(f"Miglior random_state: {best_random_state}")
+print(f"Accuratezza corrispondente: {best_accuracy:.4f}")
 
 # 3. Visualizzazione (Istogramma + Boxplot)
 plt.figure(figsize=(12, 5))
@@ -671,7 +616,7 @@ print(f"({ci[0]:.4f}, {ci[1]:.4f})")
 
 
 
-#%%
+
 
 
 

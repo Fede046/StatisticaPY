@@ -12,10 +12,10 @@ from sklearn.metrics import mean_squared_error, r2_score
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
 
-#C:\Users\malse\.cache\kagglehub\datasets
+#C:\Users\user\.cache\kagglehub\datasets
 # Download latest version
 path = kagglehub.dataset_download("anubhabswain/brain-weight-in-humans")
-#print("Path to dataset files:", path)
+
 # Load the dataset using the correct filename
 data = pd.read_csv(os.path.join(path, "dataset.csv"))
 
@@ -32,6 +32,9 @@ N, d = data.shape
 #data.info()
 
 #%%
+# =============================================
+print('PULIZIA DATASET')
+# =============================================
 #Impostiamo variabili categoriche quelle che non sono
 num_type=['float64','int64']
 
@@ -42,7 +45,7 @@ for col in data.columns:
   #      print(f"{col} type: {data[col].dtype}.")
  #   print("-"*45)
 # Check the results
-#data.info()
+data.info()
 # Cerchiamo i valori NaN
 total_NaN = data.isnull().sum()
 #print("Valori NaN prima della pulizia:")
@@ -74,10 +77,9 @@ numerical_col=numerical_col.drop(columns=['Gender','Age Range'])
 #numerical_col.head()
 
 #%%
-#Vediamo se ci sono dei dati molto diversi da altri dati ed eventualemente togliere
-hotel_numerical_features = ['Head Size(cm^3)','Brain Weight(grams)']
+#Vediamo se ci sono dei dati molto diversi da altri dati ed eventualemente togliere (outliers)
 
-for col in hotel_numerical_features:
+for col in numerical_col:
     plt.figure(figsize=(10, 6))
     sns.boxplot(x=numerical_col[col], color='skyblue')
     # Calcola e mostra i valori statistici
@@ -109,43 +111,53 @@ for col in hotel_numerical_features:
 
 
 #%%
-#Regressione Lineare
+# =============================================
+print('Regressione Lineare')
+# =============================================
 
 # Extract input and output variables
 x = numerical_col['Head Size(cm^3)'].values.reshape(-1, 1)  # X = variabile indipendente
 y = numerical_col['Brain Weight(grams)'].values.reshape(-1, 1)  # Y = variabile dipendente
-# Create linear regression object and fit the model
+
+#Crea un regressione lineare e fa il fit al modello
 reg = LinearRegression().fit(x, y)
 
-# Predict the y-values using the trained model
+# Prevedo i valori y utilizzando il modello addestrato
 y_pred = reg.predict(x)
 
-# Plot the data points and the linear regression line
+# Traccio i punti dati e la retta di regressione lineare
 plt.scatter(x, y, color='blue')
 plt.plot(x, y_pred, color='red')
 
-# Add labels and a title to the plot
+# Aggiungo etichette e un titolo al grafico
 plt.xlabel('Brain Weight(grams)')
 plt.ylabel('Head Size(cm^3)')
 plt.title('Simple Linear Regression')
-# Display the plot
+
+# Dispplay del plot
 plt.show()
-#Stampo il coefficiente R^2
-print("Coefficient of determination (R^2): %.2f" % r2_score(y, y_pred))
+
 #%%
 #Tutti i print necessari
+# =============================================
+print("RISULTATI REGRESSIONE LINEARE")
+# =============================================
 
 #Stampa dei Coefficienti (B0 e B1)
-print("RISULTATI REGRESSIONE LINEARE")
 print(f"Intercetta (B0): {reg.intercept_[0]:.2f}")
 print(f"Pendenza (B1): {reg.coef_[0][0]:.4f}")
+
+#Stampo il coefficiente R^2
+print("Coefficient of determination (R^2): %.2f" % r2_score(y, y_pred))
 
 #Calcolo del MSE (Mean Squared Error)
 mse = mean_squared_error(y, y_pred)
 print(f"MSE: {mse:.2f}")
 #%%
-#Analisi di Normalità dei Residui
-
+#
+# =============================================
+print("Analisi di Normalità dei Residui")
+# =============================================
 
 # Calcolo dei residui
 #Come da slide sulla regressione lineare semplice
@@ -162,13 +174,6 @@ plt.xlabel('Residui')
 plt.ylabel('Frequenza')
 plt.show()
 
-
-#Usata dalla prof
-# QQ-plot dei residui (viene male) (retta verticale)
-#plt.figure(figsize=(10, 6))
-#sm.qqplot(results.resid.values, line='45')
-#plt.title('QQ-plot dei Residui')
-#plt.show()
 
 # QQ-plot dei residui
 stats.probplot(results.resid,plot=plt)
@@ -188,38 +193,3 @@ if shapiro_test[1] > 0.05:
 else:
     print("I residui NON seguono una distribuzione normale (rifiutiamo H0)")
 
-#%%
-# INTERPRETAZIONE FINALE DEI RISULTATI
-
-# 1. Bontà del Modello (R² = 0.64)
-# Il modello spiega il 64% della variabilità del peso del cervello in base alla dimensione della testa.
-# Si tratta di un valore relativamente buono, soprattutto in ambiti come le scienze biologiche o mediche,
-# dove la variabilità individuale è spesso elevata.
-# Limite: rimane comunque un 36% di variabilità non spiegata, che potrebbe essere attribuita a variabili non incluse nel modello
-# (come età, sesso, caratteristiche genetiche, ecc.).
-
-# 2. Coefficienti di Regressione
-# Intercetta (325.57 grammi):
-# - Rappresenta il valore teorico del peso cerebrale quando la dimensione della testa è zero.
-# - In questo contesto biologico l'interpretazione non è significativa, ma è necessaria per definire la retta di regressione.
-
-# Pendenza (0.2634 grammi/cm³):
-# - Indica una relazione positiva tra volume cranico e peso cerebrale.
-# - Ogni cm³ in più di volume cranico è associato in media a un aumento di circa 0.26 grammi nel peso del cervello.
-# - Questa relazione è plausibile biologicamente: volumi cranici maggiori tendono ad ospitare cervelli più pesanti.
-
-# 3. Errore (MSE = 5201.38)
-# - L'errore quadratico medio indica quanto in media si discostano le previsioni dai valori reali.
-# - Un MSE relativamente alto segnala che, pur essendo presente una relazione lineare, le previsioni non sono perfette.
-# - Questo è coerente con il fatto che il modello spiega solo il 64% della variabilità.
-
-# 4. Problema di Normalità dei Residui (Shapiro-Wilk p-value = 0.0236)
-# - Il p-value inferiore a 0.05 suggerisce che i residui **non** seguono una distribuzione normale.
-# - Conseguenze:
-#   * Le stime dei coefficienti (pendenza e intercetta) sono comunque valide: la regressione lineare è abbastanza robusta.
-#   * Tuttavia, gli intervalli di confidenza e i test di significatività (p-value sui coefficienti) potrebbero essere meno affidabili.
-#   * Questo potrebbe influire leggermente sulla precisione delle conclusioni statistiche.
-
-# Conclusione generale:
-# Il modello è utile e ha una interpretazione coerente con la realtà biologica, ma può essere migliorato includendo altre variabili predittive
-# e/o utilizzando modelli più complessi se necessario.
