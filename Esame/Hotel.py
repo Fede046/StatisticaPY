@@ -321,7 +321,7 @@ print('PREPARAZIONE DATASET PER LA CLASSIFICAZIONE (size->less_data)')
 #Creo un dataset con meno campioni perchè faccio fatica a compilare
 
 # Campionamento stratificato -> eventualmente aumentare
-size = 0.02 #0.02 creazione della matrice di confusione con circa 350 dati
+size = 0.2 #0.02 creazione della matrice di confusione con circa 350 dati
 less_data = numerical_col.groupby('is_canceled', group_keys=False).apply(
     lambda x: x.sample(frac=size, random_state=100),
     include_groups=False
@@ -379,8 +379,7 @@ for val_size in [0.15, 0.20, 0.25]:  # 15%, 20%, 25% del totale
         # Addestramento e valutazione
         model = SVC(kernel="linear", C=10, random_state=random_state)
         model.fit(X_train, y_train)
-        # valutazione dell'accuratezza sul validation set (valuto la roustezza) (sulla base di questo scelgo il train)
-        # Scegliere gli iperparametri e ottimizzare il modello.
+        # valutazione dell'accuratezza sul validation set
         val_accuracy = model.score(X_val, y_val)
         # print(f"Random State: {random_state}, Accuracy: {accuracy:.4f}")
         accuracies.append(val_accuracy)
@@ -424,8 +423,6 @@ print('6. Creazione dell heatmap della matrice di confusione')
 #Prevediamo i dati e valutiamo le performance della previsione
 
 # Misuriamo l'accuratezza del modello
-# Nella variabile in input mettiamo solo x val, e predice l'output basandosi
-# dalle variabili x val,
 y_pred = final_model.predict(X_val)
 conf_mat = confusion_matrix(y_val, y_pred)
 
@@ -528,9 +525,9 @@ print(f"Accuracy media: {best_accuracy:.4f}")
 print('8. STUDIO STATISTICO SUI RISULTATI (SOLO ACCURATEZZA) (K)')
 # =============================================
 
-#(non penso si corretta la parte del cilo for 70 15 15 non me lo ricordavo)(molto lento con k=30)
+
 # Configurazione
-k = 5  # Numero di ripetizioni >= 10 come richiesto
+k = 20  # Numero di ripetizioni >= 10 come richiesto
 accuracie8 = []
 
 # 1. Ripetizione addestramento e valutazione
