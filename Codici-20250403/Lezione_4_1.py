@@ -5,7 +5,7 @@ import pandas as pd
 import seaborn as sns
 
 #%%
-path="C:\\Users\\dario\\Desktop\\DARIO\\Tutorati\\Statistica Numerica"
+path="C:\\Users\\malse\\Documents\\GitHub\\StatisticaPY\\dataframes-20250313\\dataframes-20250320"
 os.chdir(path)
 
 #Carichiamo il dataset usando pandas 

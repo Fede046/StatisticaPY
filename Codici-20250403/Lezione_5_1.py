@@ -13,7 +13,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 
 #%%
 #Caricamento del dataset
-path="C:/Users/malse/Desktop/Secondo Anno Secondo Periodo/Statistica/StatisticaPY/dataframes-20250313/dataframes-20250320"
+path="C:\\Users\\malse\\Documents\\GitHub\\StatisticaPY\\dataframes-20250313\\dataframes-20250320"
 data=pd.read_csv(os.path.join(path, "Orange Quality Data.csv"))
 
 #%%
