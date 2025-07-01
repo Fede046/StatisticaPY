@@ -316,6 +316,7 @@ print('Classificazione')
 # =============================================
 print('PREPARAZIONE DATASET PER LA CLASSIFICAZIONE (size->less_data)')
 # =============================================
+np.random.seed(66)
 
 
 #Creo un dataset con meno campioni perchè faccio fatica a compilare

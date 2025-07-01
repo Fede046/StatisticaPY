@@ -23,6 +23,7 @@ data = pd.read_csv(os.path.join(path, "dataset.csv"))
 #print(data.head())
 
 #%%
+
 #Dimensioni del dataset
 N, d = data.shape
 #print(f"Il Dataset ha {N} righe e {d} colonne.")
@@ -44,7 +45,6 @@ for col in data.columns:
         data[col]=data[col].astype("category")
   #      print(f"{col} type: {data[col].dtype}.")
  #   print("-"*45)
-# Check the results
 data.info()
 # Cerchiamo i valori NaN
 total_NaN = data.isnull().sum()
@@ -72,8 +72,6 @@ numerical_col=data.select_dtypes(include=num_type)
 numerical_col=numerical_col.drop(columns=['Gender','Age Range'])
 #print(numerical_col.head())
 #numerical_col.info()
-#Questa parte del codice serve a isolare le variabili numeriche dal
-#dataset completo per poter effettuare analisi specifiche che richiedono dati quantitativi.
 #numerical_col.head()
 
 #%%
@@ -114,6 +112,7 @@ for col in numerical_col:
 # =============================================
 print('Regressione Lineare')
 # =============================================
+
 
 # Extract input and output variables
 x = numerical_col['Head Size(cm^3)'].values.reshape(-1, 1)  # X = variabile indipendente
