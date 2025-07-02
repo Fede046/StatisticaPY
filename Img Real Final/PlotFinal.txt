@@ -1,0 +1,193 @@
+C:\Users\malse\anaconda3\python.exe C:\Users\malse\Documents\GitHub\StatisticaPY\Esame\Hotel.py 
+CARICARE DATASET
+PRE-PROCESSING
+VARIABILI CATEGORICHE
+RIMOZIONE COLONNE NON NECESSARIE E VALORI NAN
+
+Valori NaN dopo la pulizia:
+hotel                        0
+is_canceled                  0
+lead_time                    0
+arrival_date_month           0
+stays_in_weekend_nights      0
+stays_in_week_nights         0
+adults                       0
+children                     0
+babies                       0
+meal                         0
+country                      0
+market_segment               0
+distribution_channel         0
+reserved_room_type           0
+assigned_room_type           0
+deposit_type                 0
+customer_type                0
+adr                          0
+total_of_special_requests    0
+reservation_status           0
+reservation_status_date      0
+dtype: int64
+RIMOZIONE VALORI NEGATIVI
+
+Controllo valori negativi dopo la pulizia:
+is_canceled: 0 valori negativi
+lead_time: 0 valori negativi
+stays_in_weekend_nights: 0 valori negativi
+stays_in_week_nights: 0 valori negativi
+adults: 0 valori negativi
+children: 0 valori negativi
+babies: 0 valori negativi
+adr: 0 valori negativi
+total_of_special_requests: 0 valori negativi
+TOLGO OUTLIER
+
+Nuove dimensioni: 118896 righe, 21 colonne
+EDA (PREPARAZIONE)
+Colonne disponibili: ['is_canceled', 'lead_time', 'stays_in_weekend_nights', 'stays_in_week_nights', 'adults', 'children', 'babies', 'adr', 'total_of_special_requests']
+ANALISI UNIVARIATA (BOX PLOT, DIAGRAMMI A TORTA, ISTOGRAMMI)
+BOX PLOT
+Numero di outlier in is_canceled: 0
+==================================================
+Numero di outlier in lead_time: 2982
+==================================================
+Numero di outlier in stays_in_weekend_nights: 263
+==================================================
+Numero di outlier in stays_in_week_nights: 3341
+==================================================
+Numero di outlier in adults: 29403
+==================================================
+Numero di outlier in children: 8579
+==================================================
+Numero di outlier in babies: 914
+==================================================
+Numero di outlier in adr: 3882
+==================================================
+Numero di outlier in total_of_special_requests: 2864
+==================================================
+DIAGRAMMI A TORTA
+ISTOGRAMMI
+Analisi multivariata (MATRICE DI CORRELAZIONE)
+La dimensione della matrice di Correlazione è: (9, 9)
+Analisi bivariata (SCATTER PLOT)
+Distribuzioni delle medie condizionate
+Tasso globale di cancellazioni: 37.13%
+
+Tasso cancellazioni per lead_time > 104 giorni: 51.20%
+Tasso cancellazioni per total_of_special_requests > 0.57 richieste: 21.78%
+Classificazione
+PREPARAZIONE DATASET PER LA CLASSIFICAZIONE (size->less_data)
+Colonne disponibili: ['lead_time', 'stays_in_weekend_nights', 'stays_in_week_nights', 'adults', 'children', 'babies', 'adr', 'total_of_special_requests', 'is_canceled']
+Numero totale di righe nel dataset ridotto: 23779
+Distribuzione originale:
+ is_canceled
+0    0.62865
+1    0.37135
+Name: proportion, dtype: float64
+
+Distribuzione campione:
+ is_canceled
+0    0.628664
+1    0.371336
+Name: proportion, dtype: float64
+4-5-6. Splitting Addestramento e Valutazione delle performance
+
+Validation size: 15%
+Mean accuracy: 0.7016
+
+Validation size: 20%
+Mean accuracy: 0.7033
+
+Validation size: 25%
+Mean accuracy: 0.7034
+
+==================================================
+Miglior validation size: 25%
+Best mean accuracy: 0.7034
+6. Creazione dell heatmap della matrice di confusione
+Accuracy sul validation set: 0.7009
+Valutazione finale sul test set
+
+Accuracy sul test set: 0.6871
+7. HYPERPARAMETER TUNING
+
+
+Testing configuration: {'kernel': 'linear', 'C': 10}
+Random State 0: Accuracy = 0.7073
+Random State 42: Accuracy = 0.7009
+Random State 100: Accuracy = 0.7004
+Random State 200: Accuracy = 0.7048
+
+Configuration linear (degree N/A):
+Mean Accuracy: 0.7034
+
+
+Testing configuration: {'kernel': 'poly', 'C': 10, 'degree': 2}
+Random State 0: Accuracy = 0.6957
+Random State 42: Accuracy = 0.6885
+Random State 100: Accuracy = 0.6876
+Random State 200: Accuracy = 0.6982
+
+Configuration poly (degree 2):
+Mean Accuracy: 0.6925
+
+
+Testing configuration: {'kernel': 'poly', 'C': 10, 'degree': 3}
+Random State 0: Accuracy = 0.6972
+Random State 42: Accuracy = 0.6923
+Random State 100: Accuracy = 0.6939
+Random State 200: Accuracy = 0.7048
+
+Configuration poly (degree 3):
+Mean Accuracy: 0.6971
+
+
+Testing configuration: {'kernel': 'rbf', 'C': 10, 'gamma': 'scale'}
+Random State 0: Accuracy = 0.6871
+Random State 42: Accuracy = 0.6836
+Random State 100: Accuracy = 0.6848
+Random State 200: Accuracy = 0.6959
+
+Configuration rbf (degree N/A):
+Mean Accuracy: 0.6878
+
+Configurazione ottimale: {'kernel': 'linear', 'C': 10}
+Accuracy media: 0.7034
+8. STUDIO STATISTICO SUI RISULTATI (SOLO ACCURATEZZA) (K)
+Random State 0: Accuracy = 0.7073
+Random State 1: Accuracy = 0.7058
+Random State 2: Accuracy = 0.7033
+Random State 3: Accuracy = 0.7065
+Random State 4: Accuracy = 0.7023
+Random State 5: Accuracy = 0.7033
+Random State 6: Accuracy = 0.7058
+Random State 7: Accuracy = 0.6996
+Random State 8: Accuracy = 0.6987
+Random State 9: Accuracy = 0.7004
+Random State 10: Accuracy = 0.7058
+Random State 11: Accuracy = 0.7034
+Random State 12: Accuracy = 0.6918
+Random State 13: Accuracy = 0.6950
+Random State 14: Accuracy = 0.7043
+Random State 15: Accuracy = 0.6937
+Random State 16: Accuracy = 0.7095
+Random State 17: Accuracy = 0.7009
+Random State 18: Accuracy = 0.7068
+Random State 19: Accuracy = 0.6923
+
+=== ANALISI STATISTICA ===
+Campioni (k): 20
+Media accuratezze: 0.7018
+Deviazione standard: 0.0051
+Minimo: 0.6918
+Massimo: 0.7095
+Mediana: 0.7033
+
+=== MIGLIORE CONFIGURAZIONE ===
+Miglior random_state: 16
+Accuratezza corrispondente: 0.7095
+
+=== INFERENZA STATISTICA ===
+Intervallo di confidenza al 95.0%:
+(0.6994, 0.7043)
+
+Process finished with exit code 0
