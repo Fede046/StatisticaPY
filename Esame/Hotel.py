@@ -320,9 +320,16 @@ np.random.seed(66)
 
 
 #Creo un dataset con meno campioni perchè faccio fatica a compilare
-less_data = numerical_col.head(40000)
-#circa 6000 dati nella matrice di confusione con 40000
 
+# Campionamento stratificato -> eventualmente aumentare
+size = 0.2 #0.02 creazione della matrice di confusione con circa 350 dati
+#less_data = numerical_col.head(500)
+less_data = numerical_col.groupby('is_canceled', group_keys=False).apply(
+    lambda x: x.sample(frac=size, random_state=100),
+    include_groups=False
+)
+# Aggiungo manualmente la colonna di raggruppamento
+less_data['is_canceled'] = numerical_col.loc[less_data.index, 'is_canceled']
 
 print("Colonne disponibili:", less_data.columns.tolist())
 
