@@ -147,7 +147,7 @@ print(primoMeno30min)
 
 #%%
 #Test di Ipotesi
-#p-value -> deve essere essere >=0.5 ALTRIMENTO Ho vieni rigettata
+#p-value -> deve essere essere >=0.05 ALTRIMENTO Ho vieni rigettata
  
 #La concentrazione di zuccheri in una bevanda non puo superare il 10%
 #on una tolleranza del 5%. Il test di ipotesi su un campione di 70 bevande
