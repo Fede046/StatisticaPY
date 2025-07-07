@@ -152,7 +152,7 @@ print(primoMeno30min)
 #La concentrazione di zuccheri in una bevanda non puo superare il 10%
 #on una tolleranza del 5%. Il test di ipotesi su un campione di 70 bevande
 #restutuisce un p-value p = 0.01. Posso certificare l’azienda?
-#Ho è rigettata perchè p-value è minore di 0.5
+#Ho è rigettata perchè p-value è minore di 0.05
 
 
 #La concentrazione di zuccheri in una bevanda non puo superare il 10%.
@@ -178,7 +178,7 @@ campione = np.random.normal(media, dev_std, 70)
 risultato = stats.ttest_1samp(campione, popmean=0.1,alternative='greater')
 print(f"Statistica t: {risultato.statistic}, p-value: {risultato.pvalue}")
 
-#In questo caso il p-value è certificato perchè super 0.5
+#In questo caso il p-value è certificato perchè super 0.05
 #LA PROF CHIEDE SOLO IL P-VALUE
 #La t rappresenta
 # la differenza tra la media campionaria osservata e la media ipotizzata sotto H0
