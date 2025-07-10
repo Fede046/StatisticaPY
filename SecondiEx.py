@@ -1,22 +1,16 @@
-#Test di Ipotesi
-
-#La concentrazione di zuccheri in una bevanda non può superare il 10%.
-#Quale istruzione è corretta per fare un test di ipotesi su 70 bevande per la cerificazione
-#H0 <=0.1
-#Ha >0.1
-import scipy.stats as stats
 import numpy as np
+import scipy.stats as stats
+np.random.seed(42)  # Per riproducibilità
 
-confidenza = 0.95
-ds = 1.5
-x_bar = 0.95
-n = 90
-quantile = stats.norm.ppf(1-(1-confidenza)/2)
+#H0 la bevanda non può superare il 10%
+#Fatta su 70 bevande
+#La concentrazione di zuccheri in una bevanda non puo superare il 10%.
+# Quale istruzione e’ corretta per fare un test di ipotesi su 70 bevande per
+ #la certificazione?
 
-#mergine d'errore
-margine = quantile*(ds/np.sqrt(n))
+rvs = stats.uniform.rvs(size = 70,random_state = 3)
+rvs = np.random.normal(0.1, 0.02, 70)
 
-#Intervallo di conf
-Inter = (x_bar-margine,x_bar+margine)
-print(Inter)
+tt = stats.ttest_1samp(rvs, popmean=0.1,alternative='greater')
+print(tt.pvalue)
 

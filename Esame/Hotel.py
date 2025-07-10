@@ -103,7 +103,7 @@ print(f"\nNuove dimensioni: {data.shape[0]} righe, {data.shape[1]} colonne")
 
 #%%
 #ELENCO DELLE COLONNE RIMASTE DALLA PULIZIA CON LE RELATIVE SPIEAGAZIONI
-# Variabile target (dipendente) - Indica se la prenotazione è stata cancellata (1) o no (0)
+# Variabile target - Indica se la prenotazione è stata cancellata (1) o no (0)
 #'is_canceled',
 
 # Numero di giorni tra la data di prenotazione e la data di arrivo
