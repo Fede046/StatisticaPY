@@ -11,6 +11,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
+from sklearn.model_selection import train_test_split
 
 #C:\Users\user\.cache\kagglehub\datasets
 # Download latest version
@@ -112,30 +113,60 @@ for col in numerical_col:
 # =============================================
 print('Regressione Lineare')
 # =============================================
-
+np.random.seed(6)
 
 # Extract input and output variables
-x = numerical_col['Head Size(cm^3)'].values.reshape(-1, 1)  # X = variabile indipendente
+X = numerical_col['Head Size(cm^3)'].values.reshape(-1, 1)  # X = variabile indipendente
 y = numerical_col['Brain Weight(grams)'].values.reshape(-1, 1)  # Y = variabile dipendente
 
-#Crea un regressione lineare e fa il fit al modello
-reg = LinearRegression().fit(x, y)
 
-# Prevedo i valori y utilizzando il modello addestrato
-y_pred = reg.predict(x)
 
-# Traccio i punti dati e la retta di regressione lineare
-plt.scatter(x, y, color='blue')
-plt.plot(x, y_pred, color='red')
+# Split the data for train and test
+X_train,X_test,y_train,y_test = train_test_split(X,y,train_size=0.7,random_state=100)
 
-# Aggiungo etichette e un titolo al grafico
-plt.xlabel('Brain Weight(grams)')
-plt.ylabel('Head Size(cm^3)')
-plt.title('Simple Linear Regression')
+# Create new axis for x column
+X_train = X_train
+X_train=X_train.reshape(-1,1)
+X_test = X_test
+X_test=X_test.reshape(-1,1)
 
-# Dispplay del plot
+
+# Fitting the model
+reg = LinearRegression().fit(X_train,y_train)
+#farlo su tutto il dataset non solo sul train,
+#in questo caso lo facciamo su un dataset grande
+#noi lo facciamo su dataset piccoli
+
+
+# Predicting the Salary for the Training values
+y_pred_train = reg.predict(X_train)
+plt.scatter(X,y,color='black')
+plt.plot(X_train,y_pred_train,color='blue')
+plt.xlabel('Years of experience')
+plt.ylabel('Salary (in thousand)')
+
+# Predicting the Salary for the Test values
+y_pred_test = reg.predict(X_test)
+
+
+# Plotting the actual and predicted values
+
+c = [i for i in range (1,len(y_test)+1,1)]
+plt.plot(c,y_test,color='r',linestyle='-')
+plt.plot(c,y_pred_test,color='b',linestyle='-')
+plt.xlabel('Salary')
+plt.ylabel('index')
+plt.title('Prediction')
 plt.show()
 
+# Disegna scatterplot e retta di regressione
+    plt.figure(figsize=(10, 6))
+    plt.scatter(X_test, y_val, color='blue', label='Data')
+    plt.xlabel(x_scelta)
+    plt.ylabel(y_scelta)
+    plt.plot(X_test, y_pred, color='red', linewidth=2, label='Retta di regressione')
+    plt.title('Retta di regressione')
+    plt.show()
 #%%
 #Tutti i print necessari
 # =============================================
@@ -147,10 +178,10 @@ print(f"Intercetta (B0): {reg.intercept_[0]:.2f}")
 print(f"Pendenza (B1): {reg.coef_[0][0]:.4f}")
 
 #Stampo il coefficiente R^2
-print("Coefficient of determination (R^2): %.2f" % r2_score(y, y_pred))
+print("Coefficient of determination (R^2): %.2f" % r2_score(y_test,y_pred_test))
 
 #Calcolo del MSE (Mean Squared Error)
-mse = mean_squared_error(y, y_pred)
+mse = mean_squared_error(y_test,y_pred_test)
 print(f"MSE: {mse:.2f}")
 #%%
 #
@@ -194,4 +225,10 @@ if shapiro_test[1] > 0.05:
     print("I residui seguono una distribuzione normale (non rifiutiamo H0)")
 else:
     print("I residui NON seguono una distribuzione normale (rifiutiamo H0)")
+
+
+
+
+
+
 

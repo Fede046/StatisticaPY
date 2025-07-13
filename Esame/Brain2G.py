@@ -11,6 +11,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
+from sklearn.model_selection import train_test_split
 
 #C:\Users\user\.cache\kagglehub\datasets
 # Download latest version
@@ -106,91 +107,78 @@ for col in numerical_col:
     #print(f"Numero di outlier in {col}: {len(outliers)}")
     #print("=" * 50)
 
-
-
 #%%
 # =============================================
-print('Regressione Lineare')
+print('Regressione Lineare con Train/Test Split')
 # =============================================
+np.random.seed(42)
+# Variabili indipendente e dipendente
+x = numerical_col['Head Size(cm^3)'].values.reshape(-1, 1)
+y = numerical_col['Brain Weight(grams)'].values.reshape(-1, 1)
 
+# Split train/test (70% train, 30% test)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
 
-# Extract input and output variables
-x = numerical_col['Head Size(cm^3)'].values.reshape(-1, 1)  # X = variabile indipendente
-y = numerical_col['Brain Weight(grams)'].values.reshape(-1, 1)  # Y = variabile dipendente
+# Creo modello e fitto sul training set
+reg = LinearRegression().fit(x_train, y_train)
 
-#Crea un regressione lineare e fa il fit al modello
-reg = LinearRegression().fit(x, y)
+# Previsioni sul test set
+y_pred_test = reg.predict(x_test)
 
-# Prevedo i valori y utilizzando il modello addestrato
-y_pred = reg.predict(x)
-
-# Traccio i punti dati e la retta di regressione lineare
-plt.scatter(x, y, color='blue')
-plt.plot(x, y_pred, color='red')
-
-# Aggiungo etichette e un titolo al grafico
-plt.xlabel('Brain Weight(grams)')
-plt.ylabel('Head Size(cm^3)')
+# Grafico: dati di training e retta
+plt.scatter(x_train, y_train, color='blue', label='Training data')
+plt.scatter(x_test, y_test, color='green', label='Test data')
+plt.plot(x_test, y_pred_test, color='red', label='Regression line (Test)')
+plt.xlabel('Head Size(cm^3)')
+plt.ylabel('Brain Weight(grams)')
 plt.title('Simple Linear Regression')
-
-# Dispplay del plot
+plt.legend()
 plt.show()
-
 #%%
-#Tutti i print necessari
 # =============================================
 print("RISULTATI REGRESSIONE LINEARE")
 # =============================================
 
-#Stampa dei Coefficienti (B0 e B1)
 print(f"Intercetta (B0): {reg.intercept_[0]:.2f}")
 print(f"Pendenza (B1): {reg.coef_[0][0]:.4f}")
 
-#Stampo il coefficiente R^2
-print("Coefficient of determination (R^2): %.2f" % r2_score(y, y_pred))
+# Coefficiente R^2 sul test set
+r2 = r2_score(y_test, y_pred_test)
+print(f"Coefficient of determination (R^2) - Test set: {r2:.2f}")
 
-#Calcolo del MSE (Mean Squared Error)
-mse = mean_squared_error(y, y_pred)
-print(f"MSE: {mse:.2f}")
+# MSE sul test set
+mse = mean_squared_error(y_test, y_pred_test)
+print(f"MSE - Test set: {mse:.2f}")
 #%%
-#
 # =============================================
-print("Analisi di Normalità dei Residui")
+print("Analisi di Normalità dei Residui (Test set)")
 # =============================================
 
-# Calcolo dei residui
-#Come da slide sulla regressione lineare semplice
-#residuals = y - y_pred
-# Modello OLS per la tua analisi preso da example_residuals.py
-results = smf.ols('Q("Brain Weight(grams)") ~ Q("Head Size(cm^3)")', data=numerical_col).fit()
-
+# Residui sul test set
+residuals_test = y_test.flatten() - y_pred_test.flatten()
 
 # Istogramma dei residui
 plt.figure(figsize=(10, 6))
-sns.histplot(results.resid, kde=True, bins=20)
-plt.title('Distribuzione dei Residui')
+sns.histplot(residuals_test, kde=True, bins=20)
+plt.title('Distribuzione dei Residui (Test set)')
 plt.xlabel('Residui')
 plt.ylabel('Frequenza')
 plt.show()
 
-
 # QQ-plot dei residui
-#Con questa funzione creo un qqplot con dei residui standardizzati
-#processo che ti permette di confrontare i residui su una scala comune,
-# indipendentemente dalle unità originali
-stats.probplot(results.resid,plot=plt)
+stats.probplot(residuals_test, plot=plt)
 plt.xlabel("Quantili teorici")
-plt.ylabel("Residui")
-plt.title('Q-Q Plot dei residui')
+plt.ylabel("Residui (Test set)")
+plt.title('Q-Q Plot dei Residui (Test set)')
 plt.show()
 
-# 4. Test di Shapiro-Wilk per la normalità
-shapiro_test = stats.shapiro(results.resid)
+# Test di Shapiro-Wilk sui residui del test set
+shapiro_test = stats.shapiro(residuals_test)
 print("\n" + "="*50)
-print("TEST DI NORMALITÀ DEI RESIDUI")
+print("TEST DI NORMALITÀ DEI RESIDUI (Test set)")
 print("="*50)
-print(f"Shapiro-Wilk p-value: {shapiro_test[1]:.4f}")
-if shapiro_test[1] > 0.05:
+print(f"Shapiro-Wilk p-value: {shapiro_test.pvalue:.4f}")
+if shapiro_test.pvalue > 0.05:
     print("I residui seguono una distribuzione normale (non rifiutiamo H0)")
 else:
     print("I residui NON seguono una distribuzione normale (rifiutiamo H0)")
