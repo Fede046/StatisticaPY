@@ -46,12 +46,10 @@ print('VARIABILI CATEGORICHE')
 num_type=['float64','int64']
 
 for col in data.columns:
- #   print(f"{col} type: {data[col].dtype}.")
     if data[col].dtype not in num_type:
         data[col]=data[col].astype("category")
-  #      print(f"{col} type: {data[col].dtype}.")
-  #  print("-"*45)
-# Check the results
+
+# Controllo il risultato
 #data.info()
 # =============================================
 print('RIMOZIONE COLONNE NON NECESSARIE E VALORI NAN')
@@ -68,7 +66,7 @@ total_NaN = data.isnull().sum()
 #print(total_NaN)
 
 # Rimuovi righe con NaN (sovrascrivi 'data')
-data = data.dropna()  # Oppure: data.dropna(inplace=True)
+data = data.dropna()
 
 # Verifica i NaN dopo la pulizia
 print("\nValori NaN dopo la pulizia:")
@@ -91,18 +89,24 @@ for col in col_num:
     print(f"{col}: {neg_count} valori negativi")
 
 # =============================================
-print('TOLGO OUTLIER')
+print('TOLGO VALORI FUORI SOGLIA')
 # =============================================
 
 #tolgo un dato che è troppo diverso dagli altri nel caso dell'adr
 data = data[data['adr'] < 5000]
+data = data[data['adults'] > 0]
+data = data[data['adults'] < 5]
+data = data[data['children'] < 4]
+data = data[data['babies'] < 4]
+data = data[data['stays_in_week_nights'] < 24]
+#print((data['stays_in_week_nights']>24).sum())
 
 
 # Verifica le nuove dimensioni
 print(f"\nNuove dimensioni: {data.shape[0]} righe, {data.shape[1]} colonne")
 
 #%%
-#ELENCO DELLE COLONNE RIMASTE DALLA PULIZIA CON LE RELATIVE SPIEAGAZIONI
+#ELENCO DELLE COLONNE RIMASTE DALLA PULIZIA
 # Variabile target - Indica se la prenotazione è stata cancellata (1) o no (0)
 #'is_canceled',
 
@@ -127,7 +131,7 @@ print(f"\nNuove dimensioni: {data.shape[0]} righe, {data.shape[1]} colonne")
 # Numero di neonati nella prenotazione
 #'babies',
 
-# Numero di richieste speciali (es. lettino, camere vicine)
+# Numero di richieste speciali (es. lettino per neonato, camere vicine)
 #'total_of_special_requests'
 
 
@@ -141,8 +145,7 @@ numerical_col=data.select_dtypes(include=num_type)
 print("Colonne disponibili:", numerical_col.columns.tolist())
 #print(numerical_col.head())
 #numerical_col.info()
-#Questa parte del codice serve a isolare le variabili numeriche dal
-#dataset completo per poter effettuare analisi specifiche che richiedono dati quantitativi.
+
 #%%
 
 # =============================================
@@ -164,7 +167,7 @@ for col in numerical_col:
              f'Min: {valor["min"]:.2f} | '
              f'Max: {valor["max"]:.2f}')
 
-    # Aggiungo linea per la media
+    # Aggiungo linea per la media e mediana
     plt.axvline(valor["mean"], color='red', linestyle='--', label='Media')
     plt.axvline(valor["50%"], color='green', linestyle='-', label='Mediana')
 
@@ -187,47 +190,65 @@ for col in numerical_col:
 print('DIAGRAMMI A TORTA')
 # =============================================
 #Diagramma a Torta solo per la variabile target
-colonne_Torta = ['is_canceled']
-for i, col in enumerate(colonne_Torta):
-    temp = numerical_col[col].value_counts()
-    plt.figure(figsize=(8,6))
-    plt.pie(temp.values, labels=temp.index, autopct='%1.1f%%', startangle=90)
-    plt.title(f'Distribuzione di {col}')
-    plt.show()
+colonne_torta = ['is_canceled','adults', 'children',
+                'babies']
+fig, axes = plt.subplots(1, 4, figsize=(20, 5))  # 1 riga, 4 colonne
 
+for i, col in enumerate(colonne_torta):
+    temp = numerical_col[col].value_counts().sort_index()
+
+    # Percentuali per la legenda
+    sizes = temp.values
+    labels = [str(int(x)) for x in temp.index]
+    percentages = (sizes / sizes.sum()) * 100
+    legend_labels = [f'{label}: {perc:.1f}%' for label, perc in zip(labels, percentages)]
+
+    # Pie chart
+    wedges, texts = axes[i].pie(sizes, labels=None, startangle=90)
+
+    # Legenda accanto a ogni torta
+    axes[i].legend(wedges, legend_labels, title=col, loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
+
+    # Titolo singolo per ogni sottoplot
+    axes[i].set_title(f'{col}', fontsize=14)
+
+plt.suptitle('Diagrammi a torta', fontsize=16)
+plt.tight_layout()
+plt.show()
 # =============================================
 print('ISTOGRAMMI')
 # =============================================
 #Istogramma per le altre variabili
-colonne_Isto = ['adr', 'lead_time', 'stays_in_weekend_nights','stays_in_week_nights',
-                'adults', 'children',
-                'babies', 'total_of_special_requests'
-                ]
-#Impostazioni del plot per genare più plot in un unico plot
-fig, axes = plt.subplots(2, 4, figsize=(15, 10))
+colonne_isto = ['adr', 'lead_time', 'stays_in_weekend_nights',
+                'stays_in_week_nights', 'total_of_special_requests']
+
+fig, axes = plt.subplots(1, len(colonne_isto), figsize=(18, 5))
 axes = axes.ravel()
 
-#Ciclo for che genera tutti gli istogrammi  in un unico plot
-for i, var in enumerate(colonne_Isto):
-    sns.histplot(data=numerical_col, x=var,  color='green', ax=axes[i], bins=30)
+for i, var in enumerate(colonne_isto):
+    sns.histplot(data=numerical_col, x=var, ax=axes[i], bins=30,
+                 color='lightgreen', edgecolor='black', alpha=0.7)
 
-    # Aggiungo linee per media e mediana
+    # Calcolo media e mediana
     mean_val = numerical_col[var].mean()
     median_val = numerical_col[var].median()
 
-    axes[i].axvline(mean_val, color='red', linestyle='--', label=f'Media: {mean_val:.1f}')
-    axes[i].axvline(median_val, color='green', linestyle='-', label=f'Mediana: {median_val:.1f}')
+    # Aggiungo linea per la media e mediana
+    axes[i].axvline(mean_val, color='red', linestyle='--', linewidth=2, label=f'Media: {mean_val:.1f}')
+    axes[i].axvline(median_val, color='blue', linestyle='-', linewidth=2, label=f'Mediana: {median_val:.1f}')
 
-    # Formattazione
-    axes[i].set_title(f'Distribuzione di {var}')
-    axes[i].set_xlabel('Valore')
+    # Etichette e titolo
+    axes[i].set_title(f'{var}', fontsize=12)
+    axes[i].set_xlabel('')
     axes[i].set_ylabel('Frequenza')
+
+    #Legenda
     axes[i].legend()
 
 
-plt.tight_layout()
+plt.suptitle('Istogrammi', fontsize=16)
+plt.tight_layout(rect=[0, 0, 1, 0.95])
 plt.show()
-
 #%%
 # =============================================
 print('Analisi multivariata (MATRICE DI CORRELAZIONE)')
@@ -255,57 +276,12 @@ print('Analisi bivariata (SCATTER PLOT)')
 # =============================================
 #
 #Scatter plot
-#Esploro se prenotazioni con anticipo (lead_time) hanno prezzi più bassi/alti.
+#Analizzo se prenotazioni con anticipo (lead_time) hanno prezzi più bassi/alti.
 plt.figure(figsize=(12, 6))
 plt.scatter(numerical_col['lead_time'], numerical_col['adr'], alpha=0.5, color='red')
 plt.title('Relazione tra lead_time e adr')
 plt.xlabel('lead_time')
 plt.ylabel('adr')
-
-#in presenza di bambini si aumenta il prezzo (adr)?
-plt.figure(figsize=(12, 6))
-plt.scatter(numerical_col['children'], numerical_col['adr'], alpha=0.5, color='blue')
-plt.title('Relazione tra children e adr')
-plt.xlabel('children')
-plt.ylabel('adr')
-
-
-#%%
-# =============================================
-print('Distribuzioni delle medie condizionate')
-# =============================================
-#
-# Calcolo delle medie globali
-media_cancellazioni = np.mean(numerical_col['is_canceled'])
-media_lead_time = np.mean(numerical_col['lead_time'])
-media_tot = np.mean(numerical_col['total_of_special_requests'])
-
-# Sub-dataframe condizionati
-filtered_lead_time = numerical_col[numerical_col['lead_time'] > media_lead_time]  # Prenotazioni con molto anticipo
-filtered_tot = numerical_col[numerical_col['total_of_special_requests'] > media_tot]                    # Prenotazioni costose
-
-# Media condizionata delle cancellazioni
-media_canc_lead_time = np.mean(filtered_lead_time['is_canceled'])
-media_canc_tot = np.mean(filtered_tot['is_canceled'])
-
-print(f"Tasso globale di cancellazioni: {media_cancellazioni:.2%}\n")
-print(f"Tasso cancellazioni per lead_time > {media_lead_time:.0f} giorni: {media_canc_lead_time:.2%}")
-print(f"Tasso cancellazioni per total_of_special_requests > {media_tot:.2f} richieste: {media_canc_tot:.2%}")
-# Visualizzazione distribuzioni condizionate
-plt.figure(figsize=(12, 5))
-
-plt.subplot(1, 2, 1)
-
-sns.histplot(filtered_lead_time['total_of_special_requests'], bins=20, kde=True, color='skyblue')
-plt.title('Distribuzione delle richieste speciali (total_of_special_requests)\nper prenotazioni con molto anticipo')
-plt.xlabel('Richieste speciali')
-
-plt.subplot(1, 2, 2)
-sns.histplot(filtered_tot['lead_time'], bins=20, kde=True, color='salmon')
-plt.title('Distribuzione dell\'anticipo (lead_time)\nper prenotazioni costose')
-plt.xlabel('Giorni di anticipo')
-
-plt.tight_layout()
 plt.show()
 
 
@@ -322,7 +298,7 @@ np.random.seed(66)
 #Creo un dataset con meno campioni perchè faccio fatica a compilare
 
 # Campionamento stratificato -> eventualmente aumentare
-size = 0.2 #0.02 creazione della matrice di confusione con circa 350 dati
+size = 0.05 #circa 5924 dati
 #less_data = numerical_col.head(500)
 less_data = numerical_col.groupby('is_canceled', group_keys=False).apply(
     lambda x: x.sample(frac=size, random_state=100),
@@ -352,26 +328,30 @@ print('4-5-6. Splitting Addestramento e Valutazione delle performance')
 # =============================================
 
 
-# Ricerca della migliore proporzione validation set
+# Ricerca della migliore proporzione
 best_accuracy = 0
 best_size = None
 results = {}
 
-# Prova diverse dimensioni per il validation set
-for val_size in [0.15, 0.20, 0.25]:  # 15%, 20%, 25% del totale
+# Prova diverse dimensioni per train e validation
+for train_size in [0.6, 0.7, 0.8]:  # 60%, 70%, 80% train
+    remaining_size = 1 - train_size
+    val_size = remaining_size * 0.5 #rispetto al rimanente
+    test_size = remaining_size - val_size
+
     accuracies = []
 
+# Loop su diversi random state per mediare le performance e ridurre la varianza dovuta allo split casuale
     for random_state in [0, 42, 100, 200]:
-        # Split 70% train, 30% temp
+        # Es: Split 70% train, 30% temp
         X_train, X_temp, y_train, y_temp = train_test_split(
             X, y,
-            train_size=0.7,
+            train_size=train_size,
             random_state=random_state
         )
 
-        # Split del 30% in validation e test
-        # Es: se val_size=0.2, test_size=0.1 (per mantenere 70-20-10)
-        test_size = 0.3 - val_size
+        # Es: Split del 30% in validation e test
+        # Es: se val_size=0.15, test_size=0.15 (70-15-15)
         X_val, X_test, y_val, y_test = train_test_split(
             X_temp, y_temp,
             test_size=test_size / (test_size + val_size),  # Calcolo proporzione
@@ -388,70 +368,20 @@ for val_size in [0.15, 0.20, 0.25]:  # 15%, 20%, 25% del totale
 
     # Calcolo media
     mean_acc = np.mean(accuracies)
-    results[val_size] = (mean_acc)
+    results[(train_size, val_size, test_size)] = mean_acc
 
-    print(f"\nValidation size: {val_size:.0%}")
+    print(f"\nTrain: {train_size:.0%} | Val: {val_size:.2%} | Test: {test_size:.2%}")
     print(f"Mean accuracy: {mean_acc:.4f}")
 
     # Aggiorna la migliore configurazione
     if mean_acc > best_accuracy:
         best_accuracy = mean_acc
-        best_size = val_size
+        best_size = (train_size, val_size, test_size)
 
 # Risultati finali
 print("\n" + "=" * 50)
-print(f"Miglior validation size: {best_size:.0%}")
+print(f"Miglior configurazione: Train={best_size[0]:.0%}, Val={best_size[1]:.2%}, Test={best_size[2]:.2%}")
 print(f"Best mean accuracy: {best_accuracy:.4f}")
-
-# 4. Addestramento finale con la migliore configurazione
-X_train, X_temp, y_train, y_temp = train_test_split(
-    X, y,
-    train_size=0.7,
-    random_state=42
-)
-X_val, X_test, y_val, y_test = train_test_split(
-    X_temp, y_temp,
-    test_size=(0.3 - best_size) / (0.3),  # Mantiene la proporzione ottimale
-    random_state=42
-)
-
-final_model = SVC(kernel="linear", C=10, random_state=42)
-final_model.fit(X_train, y_train)
-#%%
-# =============================================
-print('6. Creazione dell heatmap della matrice di confusione')
-# =============================================
-
-#Prevediamo i dati e valutiamo le performance della previsione
-
-# Misuriamo l'accuratezza del modello
-y_pred = final_model.predict(X_val)
-conf_mat = confusion_matrix(y_val, y_pred)
-
-# Calcolare l'accuratezza sulla validation set
-accuracy_val2 = accuracy_score(y_val, y_pred)
-print(f"Accuracy sul validation set: {accuracy_val2:.4f}")
-
-# Creazione dell'heatmap della matrice di confusione
-plt.figure(figsize=(10, 8))
-sns.heatmap(conf_mat, annot=True, fmt='d', cmap='Oranges', cbar=False)
-plt.title('Confusion Matrix - Support Vector Machines with linear kernel')
-plt.xlabel('Predicted')
-plt.ylabel('True')
-plt.show()
-
-#%%
-# =============================================
-print('Valutazione finale sul test set')
-# =============================================
-
-# Valutazione finale sul test set (SOLO UNA VOLTA!)
-# 3. Test finale (solo dopo aver scelto il modello ottimale!)
-# Valutare la performance finale del modello su dati completamente nuovi
-test_accuracy = final_model.score(X_test, y_test)
-print(f"\nAccuracy sul test set: {test_accuracy:.4f}")
-
-
 
 #%%
 # =============================================
@@ -473,26 +403,29 @@ best_accuracy = 0
 # Test per ogni configurazione
 for config in configurations:
     print(f"\n\nTesting configuration: {config}")
-    accuracie7 = []
+    val_accuracies_config = []
+
+    #Dichiaro il modello
+    model = SVC(**config)
 
     for random_state in [0, 42, 100, 200]:
         #############################
         # Split dei dati (70% train, 30% temp)
         X_train, X_temp, y_train, y_temp = train_test_split(
             X, y,
-            test_size=0.3,
+            train_size=best_size[0],
             random_state=random_state
         )
 
         # Split ulteriore (con la proporzione ottimale)
         X_val, X_test, y_val, y_test = train_test_split(
             X_temp, y_temp,
-            test_size=(0.3 - best_size) / (0.3),
+            test_size=best_size[2] / (best_size[1] + best_size[2]),
             random_state=random_state
         )
 
         # Addestramento modello
-        model = SVC(**config, random_state=random_state)
+        model = SVC(**config)
         model.fit(X_train, y_train)
 
 
@@ -500,13 +433,13 @@ for config in configurations:
         y_val_pred = model.predict(X_val)
         # Valutazione sul VALIDATION set (come richiesto)
         acc = accuracy_score(y_val, y_val_pred)
-        accuracie7.append(acc)
+        val_accuracies_config.append(acc)
 
         print(f"Random State {random_state}: Accuracy = {acc:.4f}")
 
 
     # Statistiche aggregate
-    mean_accuracy = np.mean(accuracie7)
+    mean_accuracy = np.mean(val_accuracies_config)
 
     print(f"\nConfiguration {config['kernel']} (degree {config.get('degree', 'N/A')}):")
     print(f"Mean Accuracy: {mean_accuracy:.4f}")
@@ -530,53 +463,52 @@ print('8. STUDIO STATISTICO SUI RISULTATI (SOLO ACCURATEZZA) (K)')
 
 # Configurazione
 k = 20  # Numero di ripetizioni >= 10 come richiesto
-accuracie8 = []
+val_accuracies_statistical_study = []
 
 # 1. Ripetizione addestramento e valutazione
 for i in range(k):
     # Split dei dati (70% train, 30% temp)
     X_train, X_temp, y_train, y_temp = train_test_split(
         X, y,
-        test_size=0.3,
+        train_size=best_size[0],
         random_state=i
     )
 
     # Split ulteriore (col best size)
     X_val, X_test, y_val, y_test = train_test_split(
         X_temp, y_temp,
-        test_size=(0.3 - best_size) / (0.3),
+        test_size=best_size[2] / (best_size[1] + best_size[2]),
         random_state=i
     )
-
     # Addestramento modello
     model = SVC(**best_config)
     model.fit(X_train, y_train)
 
-    # Valutazione sul VALIDATION set (come richiesto)
+    # Valutazione sul VALIDATION set
     y_val_pred = model.predict(X_val)
     acc = accuracy_score(y_val, y_val_pred)
-    accuracie8.append(acc)
+    val_accuracies_statistical_study.append(acc)
 
     #Print per vedere l'accuratezza di ogni singolo State (serve per capire se va avanti)
     print(f"Random State {i}: Accuracy = {acc:.4f}")
 
 # Converti in array numpy per calcoli statistici
-accuracie8 = np.array(accuracie8)
+val_accuracies_statistical_study = np.array(val_accuracies_statistical_study)
 
 # 2. Statistica descrittiva
 print("\n=== ANALISI STATISTICA ===")
 print(f"Campioni (k): {k}")
-print(f"Media accuratezze: {np.mean(accuracie8):.4f}")
-print(f"Deviazione standard: {np.std(accuracie8):.4f}")
-print(f"Minimo: {np.min(accuracie8):.4f}")
-print(f"Massimo: {np.max(accuracie8):.4f}")
-print(f"Mediana: {np.median(accuracie8):.4f}")
+print(f"Media accuratezze: {np.mean(val_accuracies_statistical_study):.4f}")
+print(f"Deviazione standard: {np.std(val_accuracies_statistical_study):.4f}")
+print(f"Minimo: {np.min(val_accuracies_statistical_study):.4f}")
+print(f"Massimo: {np.max(val_accuracies_statistical_study):.4f}")
+print(f"Mediana: {np.median(val_accuracies_statistical_study):.4f}")
 #aggiungere identifica ottimale
 
 #Identificazione configurazione ottimale
-best_index = np.argmax(accuracie8)
+best_index = np.argmax(val_accuracies_statistical_study)
 best_random_state = best_index
-best_accuracy = accuracie8[best_index]
+best_accuracy = val_accuracies_statistical_study[best_index]
 
 print("\n=== MIGLIORE CONFIGURAZIONE ===")
 print(f"Miglior random_state: {best_random_state}")
@@ -587,16 +519,16 @@ plt.figure(figsize=(12, 5))
 
 # Istogramma
 plt.subplot(1, 2, 1)
-plt.hist(accuracie8, bins=10, color='skyblue', edgecolor='black')
+plt.hist(val_accuracies_statistical_study, bins=10, color='skyblue', edgecolor='black')
 plt.title('Distribuzione Accuratezze')
 plt.xlabel('Accuracy')
 plt.ylabel('Frequenza')
-plt.axvline(np.mean(accuracie8), color='red', linestyle='--', label=f'Media: {np.mean(accuracie8):.4f}')
+plt.axvline(np.mean(val_accuracies_statistical_study), color='red', linestyle='--', label=f'Media: {np.mean(val_accuracies_statistical_study):.4f}')
 plt.legend()
 
 # Boxplot
 plt.subplot(1, 2, 2)
-plt.boxplot(accuracie8, vert=False)
+plt.boxplot(val_accuracies_statistical_study, vert=False)
 plt.title('Boxplot Accuratezze')
 plt.xlabel('Accuracy')
 plt.tight_layout()
@@ -606,8 +538,8 @@ plt.show()
 
 confidence = 0.95
 ci = stats.t.interval(confidence, k-1,
-                     loc=np.mean(accuracie8),
-                     scale=stats.sem(accuracie8))
+                     loc=np.mean(val_accuracies_statistical_study),
+                     scale=stats.sem(val_accuracies_statistical_study))
 
 print("\n=== INFERENZA STATISTICA ===")
 print(f"Intervallo di confidenza al {confidence*100}%:")
@@ -615,6 +547,50 @@ print(f"({ci[0]:.4f}, {ci[1]:.4f})")
 
 
 
+
+#%%
+# =============================================
+print('Valutazione finale sul test set')
+# =============================================
+
+# Addestramento finale con la migliore configurazione
+X_train, X_temp, y_train, y_temp = train_test_split(
+    X, y,
+    train_size=best_size[0],  # Usa il miglior train_size trovato
+    random_state=best_random_state
+)
+X_val, X_test, y_val, y_test = train_test_split(
+    X_temp, y_temp,
+    test_size=best_size[2] / (best_size[1] + best_size[2]),  # Proporzione ottimale
+    random_state=best_random_state
+)
+
+# Addestramento modello
+model = SVC(**best_config)
+model.fit(X_train, y_train)
+
+
+# =============================================
+print('6. Creazione dell heatmap della matrice di confusione')
+# =============================================
+
+#Prevediamo i dati e valutiamo le performance della previsione
+
+# Misuriamo l'accuratezza del modello
+y_pred_test = model.predict(X_test)
+conf_mat = confusion_matrix(y_test, y_pred_test)
+
+#Accuratezza sul test set
+test_accuracy = model.score(X_test, y_test)
+print(f"\nAccuracy sul test set: {test_accuracy:.4f}")
+
+# Creazione dell'heatmap della matrice di confusione
+plt.figure(figsize=(10, 8))
+sns.heatmap(conf_mat, annot=True, fmt='d', cmap='Oranges', cbar=False)
+plt.title('Matrice di Confusione - Con kernel Ottimale')
+plt.xlabel('Predicted')
+plt.ylabel('True')
+plt.show()
 
 
 
