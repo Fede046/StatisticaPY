@@ -200,6 +200,9 @@ tt = stats.ttest_1samp(rvs, popmean=0.5)
 
 #%%
 
+import scipy.stats as stats
+import numpy as np
+
 #Si abbia un SRS(50) da una distribuzione normale con media µ deviazione
 #standard 1. Supponendo che la media campionaria calcolata sia ¯x = 35,
 #e la deviazione standard campionaria sia S = 1.2qual `e l’intervallo di
@@ -230,6 +233,8 @@ print(confidence_interval)
 #%%
 
 
+import scipy.stats as stats
+import numpy as np
 #Si abbia un SRS(100) da una distribuzione normale con media µ deviazione
 #standard 2.5. Supponendo che la media campionaria calcolata sia ¯x = 18
 #e la deviazione standard campionaria sia S = 2.45, qual `e l’intervallo di
@@ -266,6 +271,8 @@ print(intervalloConf1)
 #analogo procedimento per il caso 2
 #%%
 
+import scipy.stats as stats
+import numpy as np
 #Si abbia un SRS(7) da una distribuzione normale con media µ deviazione
 #standard non nota. Supponendo che la media campionaria calcolata sia
 #x¯ = 18 e la deviazione standard campionaria sia S = 1.8, qual `e l’intervallo
@@ -276,7 +283,7 @@ n=7 #numero di elementi
 #sigma non nota 
 x_bar = 18 #media
 s = 1.8 #deviazione standard campionaria
-confidenza = 0.99 
+confidenza = 0.90 
 
 #caso 1b) distribuzione normale ma non sappiamo la deviazione standard
 
@@ -319,8 +326,12 @@ intervallo = (x_bar-margine_errore,x_bar+margine_errore)
 
 print(intervallo)
 
+#%%
+#Generare un campione casuale di 20 elementi da una distribuzione binomiale con p=0.55, n=100, utilizzando come seme generatore 10. Stimare
+#con il metodo MLE il valore di p supponendo noto n.
 
-
-
+np.random.seed(10)
+campione = np.random.binomial(n=100, p=0.55,size=20)
+print(campione)
 
 
