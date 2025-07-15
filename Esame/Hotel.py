@@ -189,7 +189,7 @@ for col in numerical_col:
 # =============================================
 print('DIAGRAMMI A TORTA')
 # =============================================
-#Diagramma a Torta solo per la variabile target
+#Diagramma a Torta per alcune variabili numeriche discrte e la variabile booleana
 colonne_torta = ['is_canceled','adults', 'children',
                 'babies']
 fig, axes = plt.subplots(1, 4, figsize=(20, 5))  # 1 riga, 4 colonne
@@ -218,7 +218,7 @@ plt.show()
 # =============================================
 print('ISTOGRAMMI')
 # =============================================
-#Istogramma per le altre variabili
+#Istogramma per le altre variabili discrete e variabile continua (adr)
 colonne_isto = ['adr', 'lead_time', 'stays_in_weekend_nights',
                 'stays_in_week_nights', 'total_of_special_requests']
 
@@ -299,7 +299,7 @@ np.random.seed(66)
 
 # Campionamento stratificato -> eventualmente aumentare
 size = 0.05 #circa 5924 dati
-#less_data = numerical_col.head(500)
+#less_data = numerical_col.head(500) #Non usata a causa della class imbalance di is_cancelled
 less_data = numerical_col.groupby('is_canceled', group_keys=False).apply(
     lambda x: x.sample(frac=size, random_state=100),
     include_groups=False
@@ -410,14 +410,14 @@ for config in configurations:
 
     for random_state in [0, 42, 100, 200]:
         #############################
-        # Split dei dati (70% train, 30% temp)
+        # Split dei dati
         X_train, X_temp, y_train, y_temp = train_test_split(
             X, y,
             train_size=best_size[0],
             random_state=random_state
         )
 
-        # Split ulteriore (con la proporzione ottimale)
+        # Split ulteriore
         X_val, X_test, y_val, y_test = train_test_split(
             X_temp, y_temp,
             test_size=best_size[2] / (best_size[1] + best_size[2]),
@@ -553,7 +553,7 @@ print(f"({ci[0]:.4f}, {ci[1]:.4f})")
 print('Valutazione finale sul test set')
 # =============================================
 
-# Addestramento finale con la migliore configurazione
+# Addestramento finale con la migliore configurazione (considero il caso che ha la migliore accuratezza)
 X_train, X_temp, y_train, y_temp = train_test_split(
     X, y,
     train_size=best_size[0],  # Usa il miglior train_size trovato
@@ -569,20 +569,17 @@ X_val, X_test, y_val, y_test = train_test_split(
 model = SVC(**best_config)
 model.fit(X_train, y_train)
 
+#Accuratezza sul test set
+test_accuracy = model.score(X_test, y_test)
+print(f"\nAccuracy sul test set: {test_accuracy:.4f}")
 
 # =============================================
 print('6. Creazione dell heatmap della matrice di confusione')
 # =============================================
 
-#Prevediamo i dati e valutiamo le performance della previsione
-
 # Misuriamo l'accuratezza del modello
 y_pred_test = model.predict(X_test)
 conf_mat = confusion_matrix(y_test, y_pred_test)
-
-#Accuratezza sul test set
-test_accuracy = model.score(X_test, y_test)
-print(f"\nAccuracy sul test set: {test_accuracy:.4f}")
 
 # Creazione dell'heatmap della matrice di confusione
 plt.figure(figsize=(10, 8))
