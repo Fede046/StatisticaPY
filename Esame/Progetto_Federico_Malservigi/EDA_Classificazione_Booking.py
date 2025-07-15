@@ -467,7 +467,7 @@ val_accuracies_statistical_study = []
 
 # 1. Ripetizione addestramento e valutazione
 for i in range(k):
-    # Split dei dati (70% train, 30% temp)
+    #Split dei dati
     X_train, X_temp, y_train, y_temp = train_test_split(
         X, y,
         train_size=best_size[0],
