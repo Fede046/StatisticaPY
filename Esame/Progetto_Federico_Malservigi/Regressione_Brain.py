@@ -53,7 +53,7 @@ total_NaN = data.isnull().sum()
 #print(total_NaN)
 
 # Rimuovi righe con NaN (sovrascrivi 'data')
-data = data.dropna()  # Oppure: data.dropna(inplace=True)
+data = data.dropna()  
 
 
 # Verifica i NaN dopo la pulizia
