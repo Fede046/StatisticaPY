@@ -327,11 +327,33 @@ intervallo = (x_bar-margine_errore,x_bar+margine_errore)
 print(intervallo)
 
 #%%
+
+import scipy.stats as stats 
+import numpy as np
+
 #Generare un campione casuale di 20 elementi da una distribuzione binomiale con p=0.55, n=100, utilizzando come seme generatore 10. Stimare
 #con il metodo MLE il valore di p supponendo noto n.
 
 np.random.seed(10)
 campione = np.random.binomial(n=100, p=0.55,size=20)
 print(campione)
+
+#%%
+#Genera un campione casuale con 30 elementi da una distribuzione normale cone
+#media  mu = 1 e std = 1, tilizzando come seme genratore 10.
+#Stimare i valori di mu e std.
+std =1 #deviazion estandard
+mu = 1 #media 
+np.random.seed(10)
+campione = np.random.normal(mu,std,size=10)
+
+#%%
+#Genera un campione casuale di 30 elementi da una distribuzione esponenziale.
+#Con lamda=12, utilizzando come seme generatore 10. Stimare il metodo MLE il valore di 
+#lamda
+campione = np.random.exponential(scale=1/12,size=30)
+
+
+
 
 
