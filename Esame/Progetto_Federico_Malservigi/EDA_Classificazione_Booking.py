@@ -93,12 +93,15 @@ print('TOLGO VALORI FUORI SOGLIA')
 # =============================================
 
 #tolgo un dato che è troppo diverso dagli altri nel caso dell'adr
-data = data[data['adr'] < 5000]
+data = data[data['adr'] < 301]
 data = data[data['adults'] > 0]
 data = data[data['adults'] < 5]
 data = data[data['children'] < 4]
 data = data[data['babies'] < 4]
-data = data[data['stays_in_week_nights'] < 24]
+data = data[data['stays_in_week_nights'] < 13]
+data = data[data['lead_time']<366]
+data = data[data['total_of_special_requests']<4]
+data = data[data['stays_in_weekend_nights'] < 8]
 #print((data['stays_in_week_nights']>24).sum())
 
 

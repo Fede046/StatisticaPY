@@ -190,7 +190,6 @@ print(f"Statistica t: {risultato.statistic}, p-value: {risultato.pvalue}")
 # ===========================================
 # ttest_1samp in SciPy - Ipotesi
 #   
-# Il soggetto è l'H0, meno di less. Maggiore di greater
 #
 # alternative = "two-sided" (default)
 #   H0: μ = popmean
