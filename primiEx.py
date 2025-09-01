@@ -187,14 +187,26 @@ print(f"Statistica t: {risultato.statistic}, p-value: {risultato.pvalue}")
 #t vicino a 0: Poca differenza rispetto a H0
 #t negativo: La media campionaria è inferiore a 0.1
 
-#alternative='greater'
-#Inende che deve essere al massimo H0. Ovvero Ha: mu>0.1
-
-#alternative='less'
-#La concentrazione di cemento di un edificio in costruzione deve essere di almeno il 74% -> H0: 0.74
-#Inende che deve essere al minimo H0. Ovvero Ha: mu<0.74
-
-#Se non c'è scritto nienete. Ha: mu != 0.1
+# ===========================================
+# ttest_1samp in SciPy - Ipotesi
+#   
+# Il soggetto è l'H0, meno di less. Maggiore di greater
+#
+# alternative = "two-sided" (default)
+#   H0: μ = popmean
+#   H1: μ ≠ popmean
+#   → Test bilaterale (differenza in entrambe le direzioni)
+#
+# alternative = "greater"
+#   H0: μ ≤ popmean
+#   H1: μ > popmean
+#   → Test unilaterale (verifica se la media è maggiore della soglia)
+#
+# alternative = "less"
+#   H0: μ ≥ popmean
+#   H1: μ < popmean
+#   → Test unilaterale (verifica se la media è minore della soglia)
+# ===========================================
 
 #%%
 
@@ -352,7 +364,7 @@ print(campione)
 
 #trovo il log della L(tetha)
 def log_likeH(theta,campione):
-    n = 100
+    n = 100 #noto
     p = theta
     log_like = np.sum(stats.binom.logpmf(campione,n= n, p=p))
     return log_like
@@ -370,7 +382,7 @@ theta0 = 0.6
 res = minimize(neg_log_like,theta0,args=(campione,),method='Nelder-Mead')
 
 
-print(res.x[0])
+print(res.x[0])#p
 
 #%%
 import scipy.stats as stats
@@ -399,7 +411,7 @@ theta0 = [1,1]
 
 res = minimize(neg_logL,theta0,args=(campione,),method='Nelder-Mead')
 
-print(res.x[0],res.x[1])
+print(res.x[0],res.x[1])#n e p
 
 
 #%%
@@ -434,8 +446,8 @@ theta0 = [1,1]
 
 #res
 res = minimize(neg_logLike1,theta0,args=(campione,),method="Nelder-Mead")
-print(res.x[0])
-print(res.x[1])
+print(res.x[0])#mu
+print(res.x[1])#ds
 
 
 
