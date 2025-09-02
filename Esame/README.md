@@ -1,12 +1,12 @@
-Per appunti/riassunti per l'esame:
+Per appunti/riassunti per l'esame:https://github.com/Fede046/AppuntiGlobal/tree/main/Approfondimenti/Statistica
 
 
-# 📊 Statistica in Python
+# Statistica in Python
 
 Questa repository raccoglie esempi pratici di calcolo statistico e distribuzioni di probabilità con **SciPy** e **NumPy**.  
 Gli script coprono vari argomenti utili per lo studio della statistica inferenziale.
 
-## 📂 Contenuti principali
+## Contenuti principali
 - Distribuzione Binomiale (PMF, CDF, media, varianza)
 - Distribuzione di Poisson
 - Distribuzione Normale (CDF, probabilità su intervalli)
@@ -15,7 +15,7 @@ Gli script coprono vari argomenti utili per lo studio della statistica inferenzi
 - Intervalli di Confidenza (σ nota e σ ignota, distribuzione normale, t di Student)
 - Stima dei parametri con **Massima Verosimiglianza (MLE)**
 
-## ⚙️ Requisiti
+## Requisiti
 - Python 3.x
 - NumPy
 - SciPy

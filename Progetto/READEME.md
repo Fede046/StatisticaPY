@@ -1,8 +1,8 @@
-# 📊 Analisi di Dataset in Python
+# Analisi di Dataset in Python
 
 Questa repository raccoglie due progetti di data science svolti con **Python** e librerie di analisi dati e machine learning.
 
-## 📂 Progetti inclusi
+## Progetti inclusi
 
 ### 1. [Analisi del Peso del Cervello Umano](./brain-weight-analysis)
 Studio della relazione tra **dimensione della testa** e **peso del cervello** tramite **regressione lineare**.
@@ -19,7 +19,7 @@ Classificazione delle prenotazioni **cancellate** o **non cancellate** usando mo
 
 ---
 
-## 🛠️ Tecnologie Utilizzate
+## Tecnologie Utilizzate
 - Python 3.x
 - Pandas, NumPy
 - Scikit-learn
