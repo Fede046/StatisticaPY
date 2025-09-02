@@ -1,6 +1,6 @@
 Per appunti/riassunti per l'esame:https://github.com/Fede046/AppuntiGlobal/tree/main/Approfondimenti/Statistica
 
-
+La cartella EsamiPassati contiene esami del 2025
 # Statistica in Python
 
 Questa repository raccoglie esempi pratici di calcolo statistico e distribuzioni di probabilità con **SciPy** e **NumPy**.  
