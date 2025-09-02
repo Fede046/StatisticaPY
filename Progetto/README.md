@@ -1,3 +1,6 @@
+Premessa: Il codice non è stato controllato dalla professoressa, pertanto non sono sicuro che sia corretto del tutto. 
+Le analisi e i grafici non risultano errati.
+
 # Analisi di Dataset in Python
 
 Questa repository raccoglie due progetti di data science svolti con **Python** e librerie di analisi dati e machine learning.
