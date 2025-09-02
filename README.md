@@ -1,3 +1,12 @@
+
+
+##  Se ti è stata utile...⭐
+
+Lascia una  stella alla repository!
+Un piccolo gesto che può aiutare altri studenti come te.
+
+---
+
 # Repository di Statistica & Data Science
 
 Questa repository raccoglie **appunti, esercizi e progetti** di statistica, probabilità, machine learning e data science, sviluppati in Python.
