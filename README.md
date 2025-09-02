@@ -1,6 +1,7 @@
 # Repository di Statistica & Data Science
 
 Questa repository raccoglie **appunti, esercizi e progetti** di statistica, probabilità, machine learning e data science, sviluppati in Python.
+Per appunti/riassunti per l'esame:https://github.com/Fede046/AppuntiGlobal/tree/main/Approfondimenti/Statistica
 
 ---
 
